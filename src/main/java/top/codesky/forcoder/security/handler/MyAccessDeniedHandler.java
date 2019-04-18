@@ -8,6 +8,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import top.codesky.forcoder.domain.vo.BaseResponseVo;
+import top.codesky.forcoder.util.JsonUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,25 +20,26 @@ import java.util.Map;
 
 @Component
 public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
+
+    // 异常处理返回操作
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        ObjectMapper objectMapper = new ObjectMapper();
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        Map<String, Object> resMap = new HashMap<>();
-        resMap.put("code", 401);
-        resMap.put("msg", e.getMessage());
-        objectMapper.writeValue(httpServletResponse.getOutputStream(), resMap);
+
+        BaseResponseVo baseResponseVo = new BaseResponseVo(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
+
+        JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), baseResponseVo);
     }
 
+    // 访问拒绝处理操作
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> resMap = new HashMap<>();
-        resMap.put("code", 403);
-        resMap.put("msg", e.getMessage());
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
-        objectMapper.writeValue(httpServletResponse.getOutputStream(), resMap);
+
+        BaseResponseVo responseVo = new BaseResponseVo(HttpStatus.FORBIDDEN.value(), e.getMessage());
+
+        JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), responseVo);
     }
 }

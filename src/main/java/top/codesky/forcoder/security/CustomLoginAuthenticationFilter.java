@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
+import top.codesky.forcoder.domain.vo.LoginRequestVo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,27 +21,38 @@ import java.io.IOException;
 public class CustomLoginAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomLoginAuthenticationFilter.class);
+    private boolean postOnly = true;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        // 仅支持POST方式的登录请求
+        if (postOnly && !request.getMethod().equals("POST")) {
+            throw new AuthenticationServiceException(
+                    "Authentication method not supported: " + request.getMethod());
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
-        LoginRequest loginRequest;
+        LoginRequestVo loginRequestVo;
         try {
-            loginRequest = objectMapper
-                    .readValue(request.getReader(), LoginRequest.class);
+            loginRequestVo = objectMapper
+                    .readValue(request.getReader(), LoginRequestVo.class);
         } catch (IOException e) {
             throw new AuthenticationServiceException("username or password not provided");
         }
-        if (null == loginRequest || StringUtils.isEmpty(loginRequest.getUsername())
-                || StringUtils.isEmpty(loginRequest.getPassword())) {
+        if (null == loginRequestVo || StringUtils.isEmpty(loginRequestVo.getUsername())
+                || StringUtils.isEmpty(loginRequestVo.getPassword())) {
             throw new AuthenticationServiceException("username or password not provided");
         }
-        logger.debug("login request:{}", loginRequest);
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        logger.debug("filter login request:{}", loginRequestVo);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequestVo.getUsername(), loginRequestVo.getPassword());
 
         this.setDetails(request, authRequest);
 
-
         return this.getAuthenticationManager().authenticate(authRequest);
+    }
+
+    @Override
+    public void setPostOnly(boolean postOnly) {
+        this.postOnly = postOnly;
     }
 }

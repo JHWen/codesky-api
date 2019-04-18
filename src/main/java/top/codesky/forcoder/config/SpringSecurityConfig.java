@@ -14,7 +14,7 @@ import top.codesky.forcoder.security.MyPasswordEncoder;
 import top.codesky.forcoder.security.handler.MyAccessDeniedHandler;
 import top.codesky.forcoder.security.handler.MyAuthenticationHandler;
 
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -38,7 +38,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin();
+        // http.formLogin();
+        // 在拦截链中添加默认实现的UsernamePasswordAuthenticationFilter
 
         http.authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
