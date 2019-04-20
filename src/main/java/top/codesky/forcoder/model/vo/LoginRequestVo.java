@@ -1,4 +1,4 @@
-package top.codesky.forcoder.domain.vo;
+package top.codesky.forcoder.model.vo;
 
 /**
  * @Date: 2019/4/18 10:29

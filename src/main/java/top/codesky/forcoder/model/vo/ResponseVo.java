@@ -1,20 +1,20 @@
-package top.codesky.forcoder.domain.vo;
+package top.codesky.forcoder.model.vo;
 
 /**
  * @Date: 2019/4/18 15:43
  * @Author: codesky
  * @Description: 服务端响应的数据封装对象
  */
-public class BaseResponseVo {
+public class ResponseVo {
     private int code;
     private String msg;
 
     private Object data;
 
-    public BaseResponseVo() {
+    public ResponseVo() {
     }
 
-    public BaseResponseVo(int code, String msg) {
+    public ResponseVo(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }

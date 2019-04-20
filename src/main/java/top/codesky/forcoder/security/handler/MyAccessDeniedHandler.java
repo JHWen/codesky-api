@@ -1,6 +1,5 @@
 package top.codesky.forcoder.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,15 +7,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
-import top.codesky.forcoder.domain.vo.BaseResponseVo;
+import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.util.JsonUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
@@ -27,7 +24,7 @@ public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDe
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        BaseResponseVo baseResponseVo = new BaseResponseVo(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
+        ResponseVo baseResponseVo = new ResponseVo(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
 
         JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), baseResponseVo);
     }
@@ -38,7 +35,7 @@ public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDe
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
 
-        BaseResponseVo responseVo = new BaseResponseVo(HttpStatus.FORBIDDEN.value(), e.getMessage());
+        ResponseVo responseVo = new ResponseVo(HttpStatus.FORBIDDEN.value(), e.getMessage());
 
         JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), responseVo);
     }

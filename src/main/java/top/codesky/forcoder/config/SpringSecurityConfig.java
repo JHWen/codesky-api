@@ -40,7 +40,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // http.formLogin();
         // 在拦截链中添加默认实现的UsernamePasswordAuthenticationFilter
-
         http.authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/user/**").hasRole("USER")

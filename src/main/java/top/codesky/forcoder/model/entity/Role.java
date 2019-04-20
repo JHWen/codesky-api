@@ -1,4 +1,4 @@
-package top.codesky.forcoder.domain.entity;
+package top.codesky.forcoder.model.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.codesky.forcoder.dao.UserDao;
-import top.codesky.forcoder.domain.entity.User;
+import top.codesky.forcoder.model.entity.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +15,18 @@ import java.util.Map;
 /**
  * @Date: 2019/4/10 10:05
  * @Author: codesky
- * @Description: forcoder
+ * @Description: 测试控制层
  */
 @RestController
 @RequestMapping("/api")
-public class IndexController {
+public class TestController {
+
+    private final UserDao userDao;
 
     @Autowired
-    private UserDao userDao;
+    public TestController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @ApiOperation(value = "管理员权限内容", notes = "返回json信息")
     @GetMapping(value = "/admin/content")
