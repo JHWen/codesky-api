@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import top.codesky.forcoder.dao.UserDao;
-import top.codesky.forcoder.model.entity.User;
+import top.codesky.forcoder.dao.UserMapper;
+import top.codesky.forcoder.model.entity.UserForAuthentication;
 
 /**
  * 查询用户信息服务
@@ -14,16 +14,16 @@ import top.codesky.forcoder.model.entity.User;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserDao userDao;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserDetailsServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public UserDetailsServiceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDao.findByUsername(username);
+        UserForAuthentication user = userMapper.findByUsername(username);
         if (null == user) {
             throw new UsernameNotFoundException("username:" + username + "not found");
         }

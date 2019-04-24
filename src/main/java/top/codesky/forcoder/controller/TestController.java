@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.codesky.forcoder.dao.UserDao;
-import top.codesky.forcoder.model.entity.User;
+import top.codesky.forcoder.dao.UserMapper;
+import top.codesky.forcoder.model.entity.UserForAuthentication;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +21,10 @@ import java.util.Map;
 @RequestMapping("/api")
 public class TestController {
 
-    private final UserDao userDao;
+    private final UserMapper userDao;
 
     @Autowired
-    public TestController(UserDao userDao) {
+    public TestController(UserMapper userDao) {
         this.userDao = userDao;
     }
 
@@ -57,7 +57,7 @@ public class TestController {
 
     @ApiOperation(value = "测试获取用户信息")
     @GetMapping(value = "/admin/{name}")
-    public User getUser(@PathVariable("name") String username) {
+    public UserForAuthentication getUser(@PathVariable("name") String username) {
         return userDao.findByUsername(username);
     }
 }

@@ -2,7 +2,6 @@ package top.codesky.forcoder.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,11 +39,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // http.formLogin();
         // 在拦截链中添加默认实现的UsernamePasswordAuthenticationFilter
-        http.authorizeRequests()
+        http.antMatcher("/api/**").
+                authorizeRequests()
+                .antMatchers("/api/register").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers(HttpMethod.GET).permitAll();
-
+                .antMatchers("/api/**").authenticated();
         http.exceptionHandling()
                 .accessDeniedHandler(myAccessDeniedHandler)
                 .authenticationEntryPoint(myAccessDeniedHandler);

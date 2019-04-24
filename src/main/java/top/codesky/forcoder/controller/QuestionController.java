@@ -1,5 +1,6 @@
 package top.codesky.forcoder.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -8,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description: 问题相关的控制层
  */
 @RestController
+@RequestMapping(path = "/api")
 public class QuestionController {
-
 
 
 }
