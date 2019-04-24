@@ -70,9 +70,9 @@
             <!-- 定义字段名重命名规则：可以去除is前缀-->
             <columnRenamingRule searchString="^is_" replaceString=""/>
             <columnOverride column="gender" javaType="short"/>
-            <columnOverride column="is_account_non_expired" javaType="_boolean"/>
-            <columnOverride column="is_account_non_locked" javaType="_boolean"/>
-            <columnOverride column="is_credentials_non_expired" javaType="_boolean"/>
+            <columnOverride column="is_account_non_expired" javaType="boolean"/>
+            <columnOverride column="is_account_non_locked" javaType="boolean"/>
+            <columnOverride column="is_credentials_non_expired" javaType="boolean"/>
             <columnOverride column="is_enabled" javaType="_boolean"/>
         </table>
 
@@ -101,6 +101,7 @@
                enableUpdateByExample="false"
                enableCountByExample="false">
             <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
+            <columnOverride column="answer_count" javaType="int"/>
         </table>
 
         <!-- Answer表(回答表) -->

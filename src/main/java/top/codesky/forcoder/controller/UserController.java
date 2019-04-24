@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.model.entity.User;
+import top.codesky.forcoder.model.other.UserInfo;
 import top.codesky.forcoder.model.vo.InfoOfMeVo;
 import top.codesky.forcoder.model.vo.RegisterUserVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
@@ -38,14 +39,14 @@ public class UserController {
     @GetMapping(path = "/me")
     public ResponseVo getUserInfo(HttpSession session) {
         ResponseVo responseVo = new ResponseVo();
-        String username = (String) session.getAttribute(Constants.USER_SESSION_TOKEN);
-        if (StringUtils.isEmpty(username)) {
+        UserInfo userInfo = (UserInfo) session.getAttribute(Constants.USER_SESSION_TOKEN);
+        if (StringUtils.isEmpty(userInfo.getUsername())) {
             responseVo.setCode(600);
             responseVo.setMsg("用户未登录");
             return responseVo;
         }
 
-        User user = userService.getUserInfo(username);
+        User user = userService.getUserInfo(userInfo.getUsername());
         if (user == null) {
             responseVo.setCode(600);
             responseVo.setMsg("用户登录状态异常");

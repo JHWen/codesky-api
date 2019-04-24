@@ -1,6 +1,7 @@
 package top.codesky.forcoder.service;
 
 import top.codesky.forcoder.model.entity.User;
+import top.codesky.forcoder.model.other.PublicationsOfMember;
 import top.codesky.forcoder.model.vo.ResponseVo;
 
 /**
@@ -12,5 +13,7 @@ public interface UserService {
     ResponseVo register(String username, String password);
 
     User getUserInfo(String username);
+
+    PublicationsOfMember getPublicationsOfMember(Long id);
 
 }

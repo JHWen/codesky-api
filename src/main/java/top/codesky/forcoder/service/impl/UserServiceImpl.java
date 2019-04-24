@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import top.codesky.forcoder.dao.UserMapper;
 import top.codesky.forcoder.model.entity.User;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
+import top.codesky.forcoder.model.other.PublicationsOfMember;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
 import top.codesky.forcoder.util.Constants;
@@ -14,8 +15,12 @@ import java.util.Date;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserMapper userMapper;
+
     @Autowired
-    private UserMapper userMapper;
+    public UserServiceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public ResponseVo register(String username, String password) {
@@ -48,5 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserInfo(String username) {
         return userMapper.selectByUsername(username);
+    }
+
+    @Override
+    public PublicationsOfMember getPublicationsOfMember(Long id) {
+        return userMapper.selectPublicationsOfMember(id);
     }
 }

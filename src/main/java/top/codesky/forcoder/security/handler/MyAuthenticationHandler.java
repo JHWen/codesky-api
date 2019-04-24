@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
+import top.codesky.forcoder.model.other.UserInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.util.Constants;
 import top.codesky.forcoder.util.JsonUtil;
@@ -22,10 +23,11 @@ import java.io.IOException;
 public class MyAuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        //授权成功,将username插入session
+        //授权成功,将userInfo(username and id)插入session
         HttpSession session = httpServletRequest.getSession();
         UserForAuthentication userForAuthentication = (UserForAuthentication) authentication.getPrincipal();
-        session.setAttribute(Constants.USER_SESSION_TOKEN, userForAuthentication.getUsername());
+        UserInfo userInfo = new UserInfo(userForAuthentication.getId(), userForAuthentication.getUsername());
+        session.setAttribute(Constants.USER_SESSION_TOKEN, userInfo);
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.OK.value());
