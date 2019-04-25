@@ -1,0 +1,36 @@
+package top.codesky.forcoder.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import top.codesky.forcoder.dao.AnswerMapper;
+import top.codesky.forcoder.model.entity.Answer;
+import top.codesky.forcoder.service.AnswerService;
+
+import java.util.Date;
+
+/**
+ * @Date: 2019/4/25 17:58
+ * @Author: codesky
+ * @Description: forcoder
+ */
+@Service
+public class AnswerServiceImpl implements AnswerService {
+
+    @Autowired
+    private AnswerMapper answerMapper;
+
+    @Override
+    public boolean addAnswer(Long questionId, Long authorId, String content) {
+        Answer answer = new Answer();
+        answer.setAuthorId(questionId);
+        answer.setQuestionId(questionId);
+        answer.setContent(content);
+
+        Date currentDate = new Date();
+        answer.setGmtCreate(currentDate);
+        answer.setGmtModified(currentDate);
+//        answer.setExcerpt("");
+
+        return answerMapper.insertSelective(answer) > 0;
+    }
+}
