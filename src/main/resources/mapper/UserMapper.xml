@@ -11,7 +11,7 @@
             <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
             <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="gender" javaType="short" jdbcType="TINYINT"/>
+            <arg column="gender" javaType="_short" jdbcType="TINYINT"/>
             <arg column="avatar_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="is_account_non_expired" javaType="_boolean" jdbcType="BIT"/>
             <arg column="is_account_non_locked" javaType="_boolean" jdbcType="BIT"/>
@@ -223,15 +223,24 @@
         WHERE `user`.username = #{username};
     </select>
 
-    <select id="selectPublicationsOfMember" parameterType="long" resultType="PublicationsOfMember">
+    <!--  根据userId，查询用户公开信息  -->
+    <select id="selectPublicationsOfMemberById" parameterType="long" resultType="PublicationsOfMember">
         SELECT `user`.username   AS username,
                `user`.avatar_url AS avatarUrl
         FROM `user`
         WHERE id = #{id,jdbcType=BIGINT};
     </select>
 
+    <!--  根据username，查询用户公开信息  -->
+    <select id="selectPublicationsOfMemberByUsername" parameterType="String" resultType="PublicationsOfMember">
+        SELECT `user`.username   AS username,
+               `user`.avatar_url AS avatarUrl
+        FROM `user`
+        WHERE username = #{username,jdbcType=VARCHAR};
+    </select>
+
     <resultMap id="detailedUserResultMap" type="UserForAuthentication">
-        <id column="id" javaType="Long" jdbcType="BIGINT" property="id"/>
+        <id column="user_id" javaType="Long" jdbcType="BIGINT" property="id"/>
         <result column="username" javaType="java.lang.String" jdbcType="VARCHAR" property="username"/>
         <result column="password" javaType="java.lang.String" jdbcType="VARCHAR" property="password"/>
         <result column="is_account_non_expired" javaType="_boolean" jdbcType="BIT" property="accountNonExpired"/>

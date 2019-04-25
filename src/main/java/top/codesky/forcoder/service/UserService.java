@@ -16,4 +16,5 @@ public interface UserService {
 
     PublicationsOfMember getPublicationsOfMember(Long id);
 
+    PublicationsOfMember getPublicationsOfMember(String username);
 }

@@ -57,6 +57,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PublicationsOfMember getPublicationsOfMember(Long id) {
-        return userMapper.selectPublicationsOfMember(id);
+        return userMapper.selectPublicationsOfMemberById(id);
+    }
+
+    @Override
+    public PublicationsOfMember getPublicationsOfMember(String username) {
+        return userMapper.selectPublicationsOfMemberByUsername(username);
     }
 }

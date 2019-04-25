@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.model.entity.User;
+import top.codesky.forcoder.model.other.PublicationsOfMember;
 import top.codesky.forcoder.model.other.UserInfo;
 import top.codesky.forcoder.model.vo.InfoOfMeVo;
 import top.codesky.forcoder.model.vo.RegisterUserVo;
@@ -13,7 +14,6 @@ import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
 import top.codesky.forcoder.util.Constants;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -73,31 +73,50 @@ public class UserController {
      * @return 用户的公开信息
      */
     @GetMapping(path = "/member/{username}/publications")
-    public Object getPublicationsOfMember(@PathVariable(name = "username") String username) {
-        return null;
+    public ResponseVo getPublicationsOfMember(@PathVariable(name = "username") String username) {
+        ResponseVo responseVo = new ResponseVo();
+        try {
+            if (!StringUtils.isEmpty(username)) {
+                PublicationsOfMember publicationsOfMember = userService.getPublicationsOfMember(username);
+                responseVo.setCode(200);
+                responseVo.setMsg("获取用户公开信息成功");
+                responseVo.setData(publicationsOfMember);
+                return responseVo;
+            }
+        } catch (Exception e) {
+            logger.error("获取用户公开信息失败：{}", e.getMessage());
+        }
+        responseVo.setCode(600);
+        responseVo.setMsg("获取用户公开信息失败");
+        return responseVo;
     }
 
     /**
      * 新用户注册
      *
-     * @return 返回注册结果
+     * @param registerUserVo 封装用户注册信息 bean
+     * @return 注册结果
      */
     @PostMapping(path = "/register")
     public ResponseVo register(@RequestBody RegisterUserVo registerUserVo) {
         ResponseVo responseVo = new ResponseVo();
 
-        if (StringUtils.isEmpty(registerUserVo.getUsername())) {
+        if (StringUtils.isEmpty(registerUserVo.getUsername()) ||
+                StringUtils.isEmpty(registerUserVo.getPassword())) {
             responseVo.setCode(600);
-            responseVo.setMsg("用户名不能为空");
+            responseVo.setMsg("用户名或密码不能为空");
+            return responseVo;
         }
 
-        if (StringUtils.isEmpty(registerUserVo.getPassword())) {
-            responseVo.setCode(600);
-            responseVo.setMsg("密码不能为空");
+        try {
+            responseVo = userService.register(registerUserVo.getUsername(), registerUserVo.getPassword());
+            return responseVo;
+        } catch (Exception e) {
+            logger.error("注册失败：{}", e.getMessage());
         }
 
-        responseVo = userService.register(registerUserVo.getUsername(), registerUserVo.getPassword());
-
+        responseVo.setCode(600);
+        responseVo.setMsg("注册失败");
         return responseVo;
     }
 
