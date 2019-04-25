@@ -2,12 +2,11 @@ package top.codesky.forcoder.controller;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.dao.UserMapper;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
+import top.codesky.forcoder.model.vo.LoginRequestVo;
+import top.codesky.forcoder.model.vo.ResponseVo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,5 +58,14 @@ public class TestController {
     @GetMapping(value = "/admin/{name}")
     public UserForAuthentication getUser(@PathVariable("name") String username) {
         return userDao.findByUsername(username);
+    }
+
+
+    @PostMapping(path = "/login")
+    public ResponseVo login(@RequestBody LoginRequestVo loginRequestVo) {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setCode(200);
+        responseVo.setMsg("success");
+        return responseVo;
     }
 }
