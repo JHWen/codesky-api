@@ -73,7 +73,7 @@
             <columnOverride column="is_account_non_expired" javaType="boolean"/>
             <columnOverride column="is_account_non_locked" javaType="boolean"/>
             <columnOverride column="is_credentials_non_expired" javaType="boolean"/>
-            <columnOverride column="is_enabled" javaType="_boolean"/>
+            <columnOverride column="is_enabled" javaType="boolean"/>
         </table>
 
         <!-- role表(角色表) -->

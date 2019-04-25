@@ -44,7 +44,7 @@ CREATE TABLE `question`  (
   `id` bigint(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '问题标题',
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '问题内容',
-  `answer` int(11) NOT NULL DEFAULT 0 COMMENT '问题的回答数',
+  `answer_count` int(11) NOT NULL DEFAULT 0 COMMENT '问题的回答数',
   `gmt_create` datetime(0) NOT NULL COMMENT '创建时间',
   `gmt_modified` datetime(0) NULL DEFAULT NULL COMMENT '上一次的更新时间',
   `author_id` bigint(11) UNSIGNED NULL DEFAULT NULL COMMENT '提问者的id',
