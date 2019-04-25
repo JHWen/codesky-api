@@ -6,16 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.model.entity.Question;
+import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.other.PublicationsOfMember;
 import top.codesky.forcoder.model.other.UserInfo;
 import top.codesky.forcoder.model.vo.QuestionDetailsVo;
-import top.codesky.forcoder.model.vo.QuestionRequestVo;
+import top.codesky.forcoder.model.vo.QuestionAddVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.QuestionService;
 import top.codesky.forcoder.service.UserService;
 import top.codesky.forcoder.util.Constants;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @Date: 2019/4/20 12:04
@@ -44,7 +46,7 @@ public class QuestionController {
      * @return
      */
     @PostMapping(path = "/question")
-    public ResponseVo addQuestion(@RequestBody QuestionRequestVo questionRequestVo, HttpSession httpSession) {
+    public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo, HttpSession httpSession) {
         ResponseVo responseVo = new ResponseVo();
         try {
             if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
@@ -126,6 +128,41 @@ public class QuestionController {
         }
         responseVo.setCode(600);
         responseVo.setMsg("删除问题失败");
+        return responseVo;
+    }
+
+    /**
+     * 获取最新的问题List，根据时间倒序排列，涉及到分页查询
+     * 携带参数 offset limit
+     *
+     * @return
+     */
+    @GetMapping(path = "/questions/latest")
+    public ResponseVo getLatestQuestions(@RequestParam(name = "offset") long offset,
+                                         @RequestParam(name = "limit") long limit) {
+        ResponseVo responseVo = new ResponseVo();
+        if (offset < 0 || limit <= 0 || limit > 10) {
+            responseVo.setCode(600);
+            responseVo.setMsg("offset或limit参数错误");
+            return responseVo;
+        }
+
+        try {
+            List<QuestionWithAuthor> questionWithAuthors = questionService.getLatestQuestions(offset, limit);
+            if (questionWithAuthors != null) {
+                logger.debug("questionWithAuthors：{}", questionWithAuthors);
+                responseVo.setCode(200);
+                responseVo.setMsg("获取问题成功");
+                responseVo.setData(questionWithAuthors);
+                return responseVo;
+            }
+        } catch (Exception e) {
+            logger.error("获取问题失败：{}", e.getMessage());
+        }
+
+        responseVo.setCode(600);
+        responseVo.setMsg("获取问题失败");
+
         return responseVo;
     }
 

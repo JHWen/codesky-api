@@ -1,14 +1,27 @@
 package top.codesky.forcoder.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.codesky.forcoder.model.entity.Question;
+import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.query.QuestionDeleteParams;
+
+import java.util.List;
 
 @Mapper
 @Repository
 public interface QuestionMapper {
 
+    /**
+     * 分页查询
+     * todo: 应该实现feed流获取，这只是个demo
+     *
+     * @param offset
+     * @param limit
+     * @return
+     */
+    List<QuestionWithAuthor> selectLatestQuestionByPage(@Param("offset") long offset, @Param("limit") long limit);
 
     /**
      * 用户删除自己的问题，即

@@ -204,4 +204,42 @@
           AND author_id = #{authorId,jdbcType=BIGINT};
     </delete>
 
+    <!-- 分页查询问题，关联查询  -->
+    <select id="selectLatestQuestionByPage" resultMap="questionResultMap">
+        SELECT id AS question_id,
+               title,
+               content,
+               answer_count,
+               gmt_create,
+               gmt_modified,
+               author_id
+        FROM question
+        ORDER BY gmt_create
+        LIMIT #{offset,jdbcType=BIGINT},#{limit,jdbcType=BIGINT};
+    </select>
+
+    <select id="selectAuthorById" parameterType="Long" resultMap="authorResultMap">
+        SELECT id AS user_id,
+               username,
+               avatar_url
+        FROM `user`
+        WHERE id = #{id,jdbcType=BIGINT};
+    </select>
+
+    <resultMap id="questionResultMap" type="QuestionWithAuthor">
+        <id column="question_id" jdbcType="BIGINT" javaType="Long" property="id"/>
+        <result column="title" jdbcType="VARCHAR" javaType="String" property="title"/>
+        <result column="content" jdbcType="LONGVARCHAR" javaType="String" property="content"/>
+        <result column="answer_count" jdbcType="INTEGER" javaType="_int" property="answerCount"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" javaType="Date" property="gmtCreate"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" javaType="Date" property="gmtModified"/>
+        <association property="author" column="author_id" select="selectAuthorById"/>
+    </resultMap>
+
+    <resultMap id="authorResultMap" type="PublicationsOfMember">
+        <id column="user_id" jdbcType="BIGINT" javaType="Long" property="id"/>
+        <result column="username" jdbcType="VARCHAR" javaType="String" property="username"/>
+        <result column="avatar_url" jdbcType="VARCHAR" javaType="String" property="avatarUrl"/>
+    </resultMap>
+
 </mapper>

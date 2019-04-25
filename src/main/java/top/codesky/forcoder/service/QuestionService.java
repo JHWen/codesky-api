@@ -1,6 +1,9 @@
 package top.codesky.forcoder.service;
 
 import top.codesky.forcoder.model.entity.Question;
+import top.codesky.forcoder.model.entity.QuestionWithAuthor;
+
+import java.util.List;
 
 public interface QuestionService {
     Question addQuestion(String title, String content, Long userId);
@@ -8,4 +11,6 @@ public interface QuestionService {
     Question getQuestionById(Long id);
 
     boolean deleteQuestion(Long questionId, Long userId);
+
+    List<QuestionWithAuthor> getLatestQuestions(long offset, long limit);
 }

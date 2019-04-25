@@ -5,7 +5,7 @@ package top.codesky.forcoder.model.vo;
  * @Author: codesky
  * @Description: 封装添加回答请求Json数据
  */
-public class QuestionRequestVo {
+public class QuestionAddVo {
     private String title;
     private String content;
 
