@@ -104,11 +104,23 @@ public class QuestionController {
         return responseVo;
     }
 
+    /**
+     * 删除问题
+     *
+     * @param questionId
+     * @param httpSession
+     * @return
+     */
     @DeleteMapping(path = "/question/{questionId}")
-    public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId) {
+    public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId, HttpSession httpSession) {
         ResponseVo responseVo = new ResponseVo();
         try {
-
+            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_SESSION_TOKEN);
+            if (questionService.deleteQuestion(questionId, userInfo.getId())) {
+                responseVo.setCode(200);
+                responseVo.setMsg("删除问题成功");
+                return responseVo;
+            }
         } catch (Exception e) {
             logger.error("删除问题失败：{}", e.getMessage());
         }

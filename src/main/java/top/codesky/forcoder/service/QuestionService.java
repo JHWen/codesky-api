@@ -6,4 +6,6 @@ public interface QuestionService {
     Question addQuestion(String title, String content, Long userId);
 
     Question getQuestionById(Long id);
+
+    boolean deleteQuestion(Long questionId, Long userId);
 }
