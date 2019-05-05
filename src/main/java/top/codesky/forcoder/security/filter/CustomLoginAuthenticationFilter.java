@@ -1,6 +1,5 @@
-package top.codesky.forcoder.security;
+package top.codesky.forcoder.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -10,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
 import top.codesky.forcoder.model.vo.LoginRequestVo;
+import top.codesky.forcoder.util.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,19 +31,19 @@ public class CustomLoginAuthenticationFilter extends UsernamePasswordAuthenticat
                     "Authentication method not supported: " + request.getMethod());
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
         LoginRequestVo loginRequestVo;
         try {
-            loginRequestVo = objectMapper
+            loginRequestVo = JsonUtils.getObjectMapper()
                     .readValue(request.getReader(), LoginRequestVo.class);
         } catch (IOException e) {
             throw new AuthenticationServiceException("username or password not provided");
         }
-        if (null == loginRequestVo || StringUtils.isEmpty(loginRequestVo.getUsername())
+        if (loginRequestVo == null || StringUtils.isEmpty(loginRequestVo.getUsername())
                 || StringUtils.isEmpty(loginRequestVo.getPassword())) {
             throw new AuthenticationServiceException("username or password not provided");
         }
         logger.debug("filter login request:{}", loginRequestVo);
+
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequestVo.getUsername(), loginRequestVo.getPassword());
 
         this.setDetails(request, authRequest);

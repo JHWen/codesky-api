@@ -2,21 +2,23 @@ package top.codesky.forcoder.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import top.codesky.forcoder.security.CustomLoginAuthenticationFilter;
-import top.codesky.forcoder.security.MyPasswordEncoder;
+import top.codesky.forcoder.security.filter.CustomLoginAuthenticationFilter;
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -31,21 +33,24 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final LogoutSuccessHandler logoutSuccessHandler;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
     public SpringSecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler,
                                 AuthenticationFailureHandler authenticationFailureHandler, AccessDeniedHandler accessDeniedHandler,
-                                AuthenticationEntryPoint authenticationEntryPoint, LogoutSuccessHandler logoutSuccessHandler) {
+                                AuthenticationEntryPoint authenticationEntryPoint, LogoutSuccessHandler logoutSuccessHandler, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.logoutSuccessHandler = logoutSuccessHandler;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new MyPasswordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
 
@@ -88,6 +93,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationManager(this.authenticationManager());
         filter.setFilterProcessesUrl("/api/login");
         return filter;
+    }
+
+    /**
+     * 密码加salt-> hash编码器
+     */
+    @Bean
+    public static BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 

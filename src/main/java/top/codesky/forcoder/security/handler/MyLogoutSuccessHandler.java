@@ -5,8 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
+import top.codesky.forcoder.common.ResultCodeEnum;
 import top.codesky.forcoder.model.vo.ResponseVo;
-import top.codesky.forcoder.util.JsonUtil;
+import top.codesky.forcoder.util.JsonUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +26,7 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(HttpStatus.OK.value());
 
-        ResponseVo responseVo = new ResponseVo(HttpStatus.OK.value(), "注销成功");
-
-        JsonUtil.getObjectMapper().writeValue(response.getOutputStream(), responseVo);
+        JsonUtils.getObjectMapper().writeValue(response.getOutputStream(),
+                ResponseVo.success(ResultCodeEnum.SUCCESS));
     }
 }

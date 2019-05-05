@@ -10,7 +10,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import top.codesky.forcoder.model.vo.ResponseVo;
-import top.codesky.forcoder.util.JsonUtil;
+import top.codesky.forcoder.util.JsonUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ public class MyAuthenticationExceptionHandler implements AuthenticationEntryPoin
 
         ResponseVo baseResponseVo = new ResponseVo(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
 
-        JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), baseResponseVo);
+        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), baseResponseVo);
     }
 
     // 访问拒绝处理操作
@@ -45,6 +45,6 @@ public class MyAuthenticationExceptionHandler implements AuthenticationEntryPoin
 
         ResponseVo responseVo = new ResponseVo(HttpStatus.FORBIDDEN.value(), e.getMessage());
 
-        JsonUtil.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), responseVo);
+        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), responseVo);
     }
 }
