@@ -1,4 +1,4 @@
-package top.codesky.forcoder.model.other;
+package top.codesky.forcoder.model.dto;
 
 /**
  * @Date: 2019/4/24 19:12
@@ -6,7 +6,7 @@ package top.codesky.forcoder.model.other;
  * @Description: 登录后保存在session中的用户信息
  */
 public class UserInfo {
-    private long id;
+    private Long id;
     private String username;
 
     public UserInfo() {
@@ -25,11 +25,11 @@ public class UserInfo {
         this.username = username;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

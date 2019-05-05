@@ -5,16 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.model.entity.User;
-import top.codesky.forcoder.model.other.PublicationsOfMember;
-import top.codesky.forcoder.model.other.UserInfo;
-import top.codesky.forcoder.model.vo.InfoOfMeVo;
+import top.codesky.forcoder.common.Constants;
+import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.model.entity.UserAdditionInfo;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.RegisterUserVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
-import top.codesky.forcoder.util.Constants;
-
-import javax.servlet.http.HttpSession;
 
 /**
  * @Date: 2019/4/20 11:38
@@ -27,8 +25,12 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     /**
@@ -37,33 +39,28 @@ public class UserController {
      * @return 个人信息
      */
     @GetMapping(path = "/me")
-    public ResponseVo getUserInfo(HttpSession session) {
-        ResponseVo responseVo = new ResponseVo();
-        UserInfo userInfo = (UserInfo) session.getAttribute(Constants.USER_SESSION_TOKEN);
-        if (StringUtils.isEmpty(userInfo.getUsername())) {
-            responseVo.setCode(600);
-            responseVo.setMsg("用户未登录");
-            return responseVo;
+    public ResponseVo getInfoAboutMe(@SessionAttribute(name = Constants.USER_INFO_SESSION_TKEY)
+                                             UserInfo userInfo) {
+
+        if (userInfo == null || StringUtils.isEmpty(userInfo.getUsername())
+                || userInfo.getId() == null) {
+            return ResponseVo.error(ResultCodeEnum.USER_NOT_LOGGED_IN);
         }
 
-        User user = userService.getUserInfo(userInfo.getUsername());
-        if (user == null) {
-            responseVo.setCode(600);
-            responseVo.setMsg("用户登录状态异常");
-            return responseVo;
+        try {
+            UserAdditionInfo userAdditionInfo = userService.getUserAdditionInfo(userInfo.getId());
+            if (userAdditionInfo == null) {
+                return ResponseVo.error(ResultCodeEnum.USER_NOT_EXIST);
+            }
+
+            PublicationsOfMemberVo infoOfMeVo = new PublicationsOfMemberVo(userAdditionInfo);
+
+            return ResponseVo.success(ResultCodeEnum.SUCCESS, infoOfMeVo);
+        } catch (Exception e) {
+            logger.error("获取用户个人信息失败：{}", e.getMessage());
         }
 
-        InfoOfMeVo infoOfMeVo = new InfoOfMeVo();
-        infoOfMeVo.setId(user.getId());
-        infoOfMeVo.setName(user.getUsername());
-        infoOfMeVo.setGender(user.getGender());
-        infoOfMeVo.setAvatarUrl(user.getAvatarUrl());
-
-        responseVo.setCode(200);
-        responseVo.setMsg("success");
-        responseVo.setData(infoOfMeVo);
-
-        return responseVo;
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -74,21 +71,24 @@ public class UserController {
      */
     @GetMapping(path = "/member/{username}/publications")
     public ResponseVo getPublicationsOfMember(@PathVariable(name = "username") String username) {
-        ResponseVo responseVo = new ResponseVo();
+        if (StringUtils.isEmpty(username)) {
+            return ResponseVo.error(ResultCodeEnum.PARAM_IS_BLANK);
+        }
+
         try {
-            if (!StringUtils.isEmpty(username)) {
-                PublicationsOfMember publicationsOfMember = userService.getPublicationsOfMember(username);
-                responseVo.setCode(200);
-                responseVo.setMsg("获取用户公开信息成功");
-                responseVo.setData(publicationsOfMember);
-                return responseVo;
+            UserAdditionInfo userAdditionInfo = userService.getPublicationsOfMember(username);
+            if (userAdditionInfo == null) {
+                return ResponseVo.error(ResultCodeEnum.USER_NOT_EXIST);
             }
+
+            PublicationsOfMemberVo publicationsOfMemberVo = new PublicationsOfMemberVo(userAdditionInfo);
+
+            return ResponseVo.success(ResultCodeEnum.SUCCESS, publicationsOfMemberVo);
         } catch (Exception e) {
             logger.error("获取用户公开信息失败：{}", e.getMessage());
         }
-        responseVo.setCode(600);
-        responseVo.setMsg("获取用户公开信息失败");
-        return responseVo;
+
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -99,25 +99,24 @@ public class UserController {
      */
     @PostMapping(path = "/register")
     public ResponseVo register(@RequestBody RegisterUserVo registerUserVo) {
-        ResponseVo responseVo = new ResponseVo();
 
         if (StringUtils.isEmpty(registerUserVo.getUsername()) ||
-                StringUtils.isEmpty(registerUserVo.getPassword())) {
-            responseVo.setCode(600);
-            responseVo.setMsg("用户名或密码不能为空");
-            return responseVo;
+                StringUtils.isEmpty(registerUserVo.getPassword()) ||
+                StringUtils.isEmpty(registerUserVo.getCheckPassword())) {
+            return ResponseVo.error(ResultCodeEnum.USER_NAME_OR_PASSWORD_IS_EMPTY);
+        }
+
+        if (!registerUserVo.getPassword().equals(registerUserVo.getCheckPassword())) {
+            return ResponseVo.error(ResultCodeEnum.USER_ENTERED_PASSWORD_DIFFER);
         }
 
         try {
-            responseVo = userService.register(registerUserVo.getUsername(), registerUserVo.getPassword());
-            return responseVo;
+            return userService.register(registerUserVo.getUsername(), registerUserVo.getPassword());
         } catch (Exception e) {
             logger.error("注册失败：{}", e.getMessage());
         }
 
-        responseVo.setCode(600);
-        responseVo.setMsg("注册失败");
-        return responseVo;
+        return ResponseVo.error(ResultCodeEnum.USER_REGISTER_ERROR);
     }
 
 }

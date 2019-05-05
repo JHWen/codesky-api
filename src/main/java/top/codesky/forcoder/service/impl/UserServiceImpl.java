@@ -1,67 +1,97 @@
 package top.codesky.forcoder.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import top.codesky.forcoder.dao.UserMapper;
-import top.codesky.forcoder.model.entity.User;
-import top.codesky.forcoder.model.entity.UserForAuthentication;
-import top.codesky.forcoder.model.other.PublicationsOfMember;
+import org.springframework.transaction.annotation.Transactional;
+import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.dao.UserAdditionInfoMapper;
+import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
+import top.codesky.forcoder.model.entity.UserAdditionInfo;
+import top.codesky.forcoder.model.entity.UserAuthenticationInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
-import top.codesky.forcoder.util.Constants;
+import top.codesky.forcoder.util.CodeskyUtils;
 
 import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserMapper userMapper;
+
+    private final UserAuthenticationInfoMapper userAuthenticationInfoMapper;
+
+    private final UserAdditionInfoMapper userAdditionInfoMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public UserServiceImpl(UserAuthenticationInfoMapper userAuthenticationInfoMapper, UserAdditionInfoMapper userAdditionInfoMapper, PasswordEncoder passwordEncoder) {
+        this.userAuthenticationInfoMapper = userAuthenticationInfoMapper;
+        this.userAdditionInfoMapper = userAdditionInfoMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * 用户注册业务
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    @Transactional
     @Override
     public ResponseVo register(String username, String password) {
         //1.查询用户名是否已经注册
-        UserForAuthentication userSelectFromDatabase = userMapper.findByUsername(username);
-        ResponseVo responseVo = new ResponseVo();
-        if (userSelectFromDatabase != null) {
-            responseVo.setCode(600);
-            responseVo.setMsg("用户已存在");
-            return responseVo;
+        int count = userAuthenticationInfoMapper.selectIfExistByUsername(username);
+        if (count > 0) {
+            return ResponseVo.error(ResultCodeEnum.USER_HAS_EXISTED);
         }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setAvatarUrl(Constants.DEFAULT_AVATAR_URl);
-        user.setGmtCreate(new Date());
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setEnabled(true);
-        userMapper.insertSelective(user);
+        //插入两个表 user_authentication_info 和 user_addition_info
+        Date currentDate = new Date();
 
-        responseVo.setCode(200);
-        responseVo.setMsg("注册成功");
+        UserAuthenticationInfo userAuthenticationInfo = new UserAuthenticationInfo();
+        userAuthenticationInfo.setUsername(username);
+        // 密码+salt哈希
+        userAuthenticationInfo.setPassword(passwordEncoder.encode(password));
+        userAuthenticationInfo.setAccountNonExpired(true);
+        userAuthenticationInfo.setAccountNonLocked(true);
+        userAuthenticationInfo.setCredentialsNonExpired(true);
+        userAuthenticationInfo.setEnabled(true);
+        userAuthenticationInfo.setGmtCreate(currentDate);
+        userAuthenticationInfo.setGmtModified(currentDate);
 
-        return responseVo;
+        //1.插入用户认证信息
+        userAuthenticationInfoMapper.insert(userAuthenticationInfo);
+
+        // 构造用户介绍描述信息
+        UserAdditionInfo userAdditionInfo = UserAdditionInfo.copyOf(CodeskyUtils.getAnonymousUser());
+
+        userAdditionInfo.setUsername(userAuthenticationInfo.getUsername());
+        userAdditionInfo.setUserId(userAuthenticationInfo.getId());
+        userAdditionInfo.setGmtCreated(currentDate);
+        userAdditionInfo.setGmtModified(currentDate);
+
+        //2.插入用户描述信息
+        userAdditionInfoMapper.insert(userAdditionInfo);
+
+        return ResponseVo.success(ResultCodeEnum.SUCCESS);
+    }
+
+
+    @Override
+    public UserAdditionInfo getUserAdditionInfo(Long userId) {
+        return userAdditionInfoMapper.selectByUserId(userId);
     }
 
     @Override
-    public User getUserInfo(String username) {
-        return userMapper.selectByUsername(username);
+    public UserAdditionInfo getPublicationsOfMember(Long id) {
+        return userAdditionInfoMapper.selectByUserId(id);
     }
 
     @Override
-    public PublicationsOfMember getPublicationsOfMember(Long id) {
-        return userMapper.selectPublicationsOfMemberById(id);
-    }
-
-    @Override
-    public PublicationsOfMember getPublicationsOfMember(String username) {
-        return userMapper.selectPublicationsOfMemberByUsername(username);
+    public UserAdditionInfo getPublicationsOfMember(String username) {
+        return userAdditionInfoMapper.selectByUsername(username);
     }
 }
