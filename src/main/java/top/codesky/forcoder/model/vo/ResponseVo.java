@@ -1,5 +1,7 @@
 package top.codesky.forcoder.model.vo;
 
+import top.codesky.forcoder.common.ResultCodeEnum;
+
 /**
  * @Date: 2019/4/18 15:43
  * @Author: codesky
@@ -42,4 +44,38 @@ public class ResponseVo {
     public void setData(Object data) {
         this.data = data;
     }
+
+    public void setResultCode(ResultCodeEnum resultCode) {
+        this.setCode(resultCode.code());
+        this.setMsg(resultCode.message());
+    }
+
+    //静态工厂方法
+    public static ResponseVo success(ResultCodeEnum resultCode) {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setResultCode(resultCode);
+        return responseVo;
+    }
+
+    public static ResponseVo success(ResultCodeEnum resultCode, Object data) {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setResultCode(resultCode);
+        responseVo.setData(data);
+        return responseVo;
+    }
+
+
+    public static ResponseVo error(ResultCodeEnum resultCode) {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setResultCode(resultCode);
+        return responseVo;
+    }
+
+    public static ResponseVo error(ResultCodeEnum resultCode, Object data) {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setResultCode(resultCode);
+        responseVo.setData(data);
+        return responseVo;
+    }
+
 }
