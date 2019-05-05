@@ -68,4 +68,12 @@ public class TestController {
         responseVo.setMsg("success");
         return responseVo;
     }
+
+    @PostMapping(path = "/logout")
+    public ResponseVo logout() {
+        ResponseVo responseVo = new ResponseVo();
+        responseVo.setCode(200);
+        responseVo.setMsg("success");
+        return responseVo;
+    }
 }

@@ -10,6 +10,15 @@ public class PublicationsOfMember {
     private String username;
     private String avatarUrl;
 
+    public PublicationsOfMember() {
+    }
+
+    public PublicationsOfMember(Long id, String username, String avatarUrl) {
+        this.id = id;
+        this.username = username;
+        this.avatarUrl = avatarUrl;
+    }
+
     public Long getId() {
         return id;
     }

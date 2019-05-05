@@ -23,4 +23,10 @@ public class UserForAuthentication extends User implements UserDetails {
         return this.roles;
     }
 
+    @Override
+    public String toString() {
+        return "UserForAuthentication{" + super.toString() +
+                ",roles=" + roles +
+                '}';
+    }
 }

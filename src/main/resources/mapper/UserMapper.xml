@@ -200,6 +200,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <!--  查询用户个人信息sql  -->
     <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -207,6 +208,7 @@
         where username = #{username,jdbcType=VARCHAR}
     </select>
 
+    <!--  用户登录授权信息查询sql  -->
     <select id="findByUsername" parameterType="string" resultMap="detailedUserResultMap">
         SELECT `user`.id                         AS user_id,
                `user`.username                   AS username,

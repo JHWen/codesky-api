@@ -9,6 +9,9 @@ public class InfoOfMeVo {
     private String avatarUrl;
     private short gender;
 
+    public InfoOfMeVo() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,5 +42,15 @@ public class InfoOfMeVo {
 
     public void setGender(short gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return "InfoOfMeVo{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", avatarUrl='" + avatarUrl + '\'' +
+                ", gender=" + gender +
+                '}';
     }
 }

@@ -1,5 +1,7 @@
 package top.codesky.forcoder.security.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,11 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
+public class MyAuthenticationExceptionHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyAuthenticationExceptionHandler.class);
 
     // 异常处理返回操作
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+        logger.debug("AuthenticationExceptionHandler : {}", e.getMessage());
+
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
@@ -32,6 +38,8 @@ public class MyAccessDeniedHandler implements AuthenticationEntryPoint, AccessDe
     // 访问拒绝处理操作
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
+        logger.debug("Access Deny:{}", e.getMessage());
+
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
 
