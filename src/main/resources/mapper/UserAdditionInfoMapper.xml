@@ -192,17 +192,6 @@
         WHERE username = #{username,jdbcType=BIGINT};
     </select>
 
-    <resultMap id="PublicationsInfoResultMap" type="UserAdditionInfo">
-        <constructor>
-            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
-            <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
-            <arg column="gender" javaType="_short" jdbcType="TINYINT"/>
-            <arg column="avatar_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="gmt_created" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        </constructor>
-    </resultMap>
+
 
 </mapper>

@@ -5,18 +5,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import top.codesky.forcoder.common.Constants;
+import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
-import top.codesky.forcoder.model.other.PublicationsOfMember;
-import top.codesky.forcoder.model.other.UserInfo;
-import top.codesky.forcoder.model.vo.QuestionDetailsVo;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.QuestionAddVo;
+import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.QuestionService;
 import top.codesky.forcoder.service.UserService;
-import top.codesky.forcoder.util.Constants;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -42,38 +43,33 @@ public class QuestionController {
      * 添加问题
      *
      * @param questionRequestVo
-     * @param httpSession
+     * @param userInfo
      * @return
      */
     @PostMapping(path = "/question")
-    public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo, HttpSession httpSession) {
-        ResponseVo responseVo = new ResponseVo();
+    public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo,
+                                  @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+
+        if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
+                StringUtils.isEmpty(questionRequestVo.getContent()) || userInfo == null) {
+
+            return ResponseVo.error(ResultCodeEnum.PARAM_NOT_COMPLETE);
+        }
+
         try {
-            if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
-                    StringUtils.isEmpty(questionRequestVo.getContent())) {
-                responseVo.setCode(600);
-                responseVo.setMsg("添加的问题为空");
-                return responseVo;
-            }
-            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_SESSION_TOKEN);
 
             Question question = questionService.addQuestion(questionRequestVo.getTitle(),
                     questionRequestVo.getContent(), userInfo.getId());
 
             if (question != null) {
-                responseVo.setCode(200);
-                responseVo.setMsg("添加问题成功");
-
-                //todo: 是否在问题中封装提问者的信息?
-                responseVo.setData(question);
-                return responseVo;
+                //todo: 添加问题，返回问题信息？ 是否在问题中封装提问者的信息?
+                return ResponseVo.success(ResultCodeEnum.SUCCESS, question);
             }
         } catch (Exception e) {
             logger.error("添加问题失败：{}", e.getMessage());
         }
-        responseVo.setCode(600);
-        responseVo.setMsg("添加问题失败");
-        return responseVo;
+
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -84,51 +80,45 @@ public class QuestionController {
      */
     @GetMapping(path = "/question/{questionId}")
     public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId) {
-        ResponseVo responseVo = new ResponseVo();
+
         try {
             Question question = questionService.getQuestionById(questionId);
             if (question != null) {
                 // 获取提问者信息
-                PublicationsOfMember author = userService.getPublicationsOfMember(question.getAuthorId());
-                if (author != null) {
+                UserAdditionInfo userAdditionInfo = userService.getPublicationsOfMember(question.getAuthorId());
+                if (userAdditionInfo != null) {
                     QuestionDetailsVo questionDetailsVo = new QuestionDetailsVo(question);
-                    questionDetailsVo.setAuthor(author);
-                    responseVo.setCode(200);
-                    responseVo.setMsg("获取问题详细信息成功");
-                    responseVo.setData(questionDetailsVo);
+                    questionDetailsVo.setAuthor(new PublicationsOfMemberVo(userAdditionInfo));
+                    return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
                 }
             }
         } catch (Exception e) {
             logger.error("获取问题详细信息失败：{}", e.getMessage());
         }
-        responseVo.setCode(600);
-        responseVo.setMsg("获取问题详细信息失败");
-        return responseVo;
+
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
      * 删除问题
      *
      * @param questionId
-     * @param httpSession
+     * @param userInfo
      * @return
      */
     @DeleteMapping(path = "/question/{questionId}")
-    public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId, HttpSession httpSession) {
-        ResponseVo responseVo = new ResponseVo();
+    public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId,
+                                     @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+
         try {
-            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_SESSION_TOKEN);
             if (questionService.deleteQuestion(questionId, userInfo.getId())) {
-                responseVo.setCode(200);
-                responseVo.setMsg("删除问题成功");
-                return responseVo;
+                return ResponseVo.success(ResultCodeEnum.SUCCESS);
             }
         } catch (Exception e) {
             logger.error("删除问题失败：{}", e.getMessage());
         }
-        responseVo.setCode(600);
-        responseVo.setMsg("删除问题失败");
-        return responseVo;
+
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -142,28 +132,20 @@ public class QuestionController {
                                          @RequestParam(name = "limit") long limit) {
         ResponseVo responseVo = new ResponseVo();
         if (offset < 0 || limit <= 0 || limit > 10) {
-            responseVo.setCode(600);
-            responseVo.setMsg("offset或limit参数错误");
-            return responseVo;
+            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
 
         try {
             List<QuestionWithAuthor> questionWithAuthors = questionService.getLatestQuestions(offset, limit);
             if (questionWithAuthors != null) {
                 logger.debug("questionWithAuthors：{}", questionWithAuthors);
-                responseVo.setCode(200);
-                responseVo.setMsg("获取问题成功");
-                responseVo.setData(questionWithAuthors);
-                return responseVo;
+                return ResponseVo.success(ResultCodeEnum.SUCCESS, questionWithAuthors);
             }
         } catch (Exception e) {
             logger.error("获取问题失败：{}", e.getMessage());
         }
 
-        responseVo.setCode(600);
-        responseVo.setMsg("获取问题失败");
-
-        return responseVo;
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 

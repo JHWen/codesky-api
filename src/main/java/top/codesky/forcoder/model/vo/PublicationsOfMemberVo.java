@@ -20,8 +20,9 @@ public class PublicationsOfMemberVo {
     public PublicationsOfMemberVo() {
     }
 
-    public PublicationsOfMemberVo(Long id, short gender, String avatarUrl, String headline, String business, Date gmtCreated, Date gmtModified) {
+    public PublicationsOfMemberVo(Long id, String username, short gender, String avatarUrl, String headline, String business, Date gmtCreated, Date gmtModified) {
         this.id = id;
+        this.username = username;
         this.gender = gender;
         this.avatarUrl = avatarUrl;
         this.headline = headline;

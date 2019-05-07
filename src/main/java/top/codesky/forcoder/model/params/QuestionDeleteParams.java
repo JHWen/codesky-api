@@ -1,4 +1,4 @@
-package top.codesky.forcoder.model.query;
+package top.codesky.forcoder.model.params;
 
 /**
  * @Date: 2019/4/25 11:00

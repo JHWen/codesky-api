@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.model.other.UserInfo;
+import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.vo.AnswerAddVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.AnswerService;
-import top.codesky.forcoder.util.Constants;
+import top.codesky.forcoder.common.Constants;
 
 import javax.servlet.http.HttpSession;
 
@@ -40,7 +40,7 @@ public class AnswerController {
         }
 
         try {
-            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_SESSION_TOKEN);
+            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_INFO_SESSION_TKEY);
             if (answerService.addAnswer(answerAddVo.getQuestionId(), userInfo.getId()
                     , answerAddVo.getContent())) {
                 responseVo.setCode(200);

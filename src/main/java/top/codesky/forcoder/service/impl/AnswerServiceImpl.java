@@ -1,6 +1,5 @@
 package top.codesky.forcoder.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.model.entity.Answer;
@@ -16,8 +15,11 @@ import java.util.Date;
 @Service
 public class AnswerServiceImpl implements AnswerService {
 
-    @Autowired
-    private AnswerMapper answerMapper;
+    private final AnswerMapper answerMapper;
+
+    public AnswerServiceImpl(AnswerMapper answerMapper) {
+        this.answerMapper = answerMapper;
+    }
 
     @Override
     public boolean addAnswer(Long questionId, Long authorId, String content) {

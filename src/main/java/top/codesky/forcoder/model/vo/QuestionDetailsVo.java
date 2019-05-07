@@ -1,7 +1,6 @@
 package top.codesky.forcoder.model.vo;
 
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.other.PublicationsOfMember;
 
 import java.util.Date;
 
@@ -18,7 +17,7 @@ public class QuestionDetailsVo {
     private int answerCount;
     private Date gmtCreate;
     private Date gmtModified;
-    private PublicationsOfMember author;
+    private PublicationsOfMemberVo author;
 
     public QuestionDetailsVo() {
     }
@@ -80,11 +79,13 @@ public class QuestionDetailsVo {
         this.gmtModified = gmtModified;
     }
 
-    public PublicationsOfMember getAuthor() {
+    public PublicationsOfMemberVo getAuthor() {
         return author;
     }
 
-    public void setAuthor(PublicationsOfMember author) {
+    public void setAuthor(PublicationsOfMemberVo author) {
         this.author = author;
     }
+
+
 }

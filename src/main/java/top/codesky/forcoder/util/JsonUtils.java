@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @Author: codesky
  * @Description: 单例模式 -> 返回自定义的ObjectMapper
  */
-public class JsonUtil {
+public class JsonUtils {
 
     private static class ObjectMapperHolder {
         private static ObjectMapper objectMapper;

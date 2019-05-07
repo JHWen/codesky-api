@@ -17,7 +17,7 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/demo?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=UTC"
+                        connectionURL="jdbc:mysql://localhost:3306/wenda?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=UTC"
                         userId="root"
                         password="123456">
             <!-- mysql8 不支持scheme、catalog -->
@@ -61,58 +61,75 @@
         </javaClientGenerator>
 
         <!-- 生成的表：tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <table tableName="user" schema="demo" domainObjectName="User" mapperName="UserMapper"
+<!--        <table tableName="user_authentication_info"-->
+<!--               enableSelectByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableCountByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>-->
+<!--            &lt;!&ndash; 定义字段名重命名规则：可以去除is前缀&ndash;&gt;-->
+<!--            <columnRenamingRule searchString="^is_" replaceString=""/>-->
+<!--            <columnOverride column="is_account_non_expired" javaType="boolean"/>-->
+<!--            <columnOverride column="is_account_non_locked" javaType="boolean"/>-->
+<!--            <columnOverride column="is_credentials_non_expired" javaType="boolean"/>-->
+<!--            <columnOverride column="is_enabled" javaType="boolean"/>-->
+<!--        </table>-->
+
+        <!--    用户附加描述信息表    -->
+        <table tableName="user_addition_info"
                enableSelectByExample="false"
                enableDeleteByExample="false"
                enableUpdateByExample="false"
                enableCountByExample="false">
             <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
-            <!-- 定义字段名重命名规则：可以去除is前缀-->
-            <columnRenamingRule searchString="^is_" replaceString=""/>
             <columnOverride column="gender" javaType="short"/>
-            <columnOverride column="is_account_non_expired" javaType="boolean"/>
-            <columnOverride column="is_account_non_locked" javaType="boolean"/>
-            <columnOverride column="is_credentials_non_expired" javaType="boolean"/>
-            <columnOverride column="is_enabled" javaType="boolean"/>
         </table>
 
-        <!-- role表(角色表) -->
-        <table tableName="role" schema="demo" domainObjectName="Role" mapperName="RoleMapper"
-               enableSelectByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableCountByExample="false">
-            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
-        </table>
 
-        <!-- role_name表(用户角色表：描述用户的角色授权关系) -->
-        <table tableName="user_role" schema="demo" domainObjectName="UserRole" mapperName="UserRoleMapper"
-               enableSelectByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableCountByExample="false">
-            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
-        </table>
+<!--        &lt;!&ndash; role表(角色表) &ndash;&gt;-->
+<!--        <table tableName="role" domainObjectName="Role" mapperName="RoleMapper"-->
+<!--               enableSelectByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableCountByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>-->
+<!--        </table>-->
 
-        <!-- question表(问题表) -->
-        <table tableName="question" schema="demo" domainObjectName="Question" mapperName="QuestionMapper"
-               enableSelectByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableCountByExample="false">
-            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
-            <columnOverride column="answer_count" javaType="int"/>
-        </table>
+<!--        &lt;!&ndash; role_name表(用户角色表：描述用户的角色授权关系) &ndash;&gt;-->
+<!--        <table tableName="user_role" domainObjectName="UserRole" mapperName="UserRoleMapper"-->
+<!--               enableSelectByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableCountByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>-->
+<!--        </table>-->
 
-        <!-- Answer表(回答表) -->
-        <table tableName="answer" schema="demo" domainObjectName="Answer" mapperName="AnswerMapper"
-               modelType="flat"
-               enableSelectByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableCountByExample="false">
-            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>
-        </table>
+<!--        &lt;!&ndash; question表(问题表) &ndash;&gt;-->
+<!--        <table tableName="question" domainObjectName="Question" mapperName="QuestionMapper"-->
+<!--               modelType="flat"-->
+<!--               enableSelectByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableCountByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>-->
+<!--            <columnOverride column="answer_count" javaType="int"/>-->
+<!--            <columnOverride column="comment_count" javaType="int"/>-->
+<!--            <columnOverride column="follower_count" javaType="int"/>-->
+<!--        </table>-->
+
+<!--        &lt;!&ndash; Answer表(回答表) &ndash;&gt;-->
+<!--        <table tableName="answer" domainObjectName="Answer" mapperName="AnswerMapper"-->
+<!--               modelType="flat"-->
+<!--               enableSelectByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableCountByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" identity="true" type="post"/>-->
+<!--            <columnRenamingRule searchString="^is_" replaceString=""/>-->
+<!--            <columnOverride column="is_anonymously" javaType="boolean"/>-->
+<!--            <columnOverride column="comment_count" javaType="int"/>-->
+<!--            <columnOverride column="voteup_count" javaType="int"/>-->
+<!--        </table>-->
 
     </context>
 </generatorConfiguration>

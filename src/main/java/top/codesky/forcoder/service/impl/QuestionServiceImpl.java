@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
-import top.codesky.forcoder.model.query.QuestionDeleteParams;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.params.QuestionDeleteParams;
 import top.codesky.forcoder.service.QuestionService;
 
 import java.util.Date;

@@ -1,6 +1,6 @@
 package top.codesky.forcoder.model.entity;
 
-import top.codesky.forcoder.model.other.PublicationsOfMember;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 
 import java.util.Date;
 
@@ -14,15 +14,20 @@ public class QuestionWithAuthor {
 
     private String title;
 
+    private String content;
+
     private int answerCount;
+
+    private int commentCount;
+
+    private int followerCount;
 
     private Date gmtCreate;
 
     private Date gmtModified;
 
-    private String content;
 
-    private PublicationsOfMember author;
+    private PublicationsOfMemberVo author;
 
     public Long getId() {
         return id;
@@ -72,24 +77,27 @@ public class QuestionWithAuthor {
         this.content = content;
     }
 
-    public PublicationsOfMember getAuthor() {
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public int getFollowerCount() {
+        return followerCount;
+    }
+
+    public void setFollowerCount(int followerCount) {
+        this.followerCount = followerCount;
+    }
+
+    public PublicationsOfMemberVo getAuthor() {
         return author;
     }
 
-    public void setAuthor(PublicationsOfMember author) {
+    public void setAuthor(PublicationsOfMemberVo author) {
         this.author = author;
-    }
-
-    @Override
-    public String toString() {
-        return "QuestionWithAuthor{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", answerCount=" + answerCount +
-                ", gmtCreate=" + gmtCreate +
-                ", gmtModified=" + gmtModified +
-                ", content='" + content + '\'' +
-                ", author=" + author +
-                '}';
     }
 }

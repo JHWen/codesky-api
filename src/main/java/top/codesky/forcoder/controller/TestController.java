@@ -3,7 +3,8 @@ package top.codesky.forcoder.controller;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.dao.UserMapper;
+import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
 import top.codesky.forcoder.model.vo.LoginRequestVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
@@ -20,11 +21,11 @@ import java.util.Map;
 @RequestMapping("/api")
 public class TestController {
 
-    private final UserMapper userDao;
-
     @Autowired
-    public TestController(UserMapper userDao) {
-        this.userDao = userDao;
+    private final UserAuthenticationInfoMapper userAuthenticationInfoMapper;
+
+    public TestController(UserAuthenticationInfoMapper userAuthenticationInfoMapper) {
+        this.userAuthenticationInfoMapper = userAuthenticationInfoMapper;
     }
 
     @ApiOperation(value = "管理员权限内容", notes = "返回json信息")
@@ -57,23 +58,17 @@ public class TestController {
     @ApiOperation(value = "测试获取用户信息")
     @GetMapping(value = "/admin/{name}")
     public UserForAuthentication getUser(@PathVariable("name") String username) {
-        return userDao.findByUsername(username);
+        return userAuthenticationInfoMapper.selectAuthenticationInfoByUsername(username);
     }
 
 
     @PostMapping(path = "/login")
     public ResponseVo login(@RequestBody LoginRequestVo loginRequestVo) {
-        ResponseVo responseVo = new ResponseVo();
-        responseVo.setCode(200);
-        responseVo.setMsg("success");
-        return responseVo;
+        return ResponseVo.success(ResultCodeEnum.SUCCESS);
     }
 
     @PostMapping(path = "/logout")
     public ResponseVo logout() {
-        ResponseVo responseVo = new ResponseVo();
-        responseVo.setCode(200);
-        responseVo.setMsg("success");
-        return responseVo;
+        return ResponseVo.success(ResultCodeEnum.SUCCESS);
     }
 }

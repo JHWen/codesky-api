@@ -39,7 +39,7 @@ public class UserController {
      * @return 个人信息
      */
     @GetMapping(path = "/me")
-    public ResponseVo getInfoAboutMe(@SessionAttribute(name = Constants.USER_INFO_SESSION_TKEY)
+    public ResponseVo getInfoAboutMe(@SessionAttribute(Constants.USER_INFO_SESSION_TKEY)
                                              UserInfo userInfo) {
 
         if (userInfo == null || StringUtils.isEmpty(userInfo.getUsername())
