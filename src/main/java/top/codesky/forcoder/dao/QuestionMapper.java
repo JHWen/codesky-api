@@ -6,12 +6,21 @@ import org.springframework.stereotype.Repository;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.params.QuestionDeleteParams;
+import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 
 import java.util.List;
 
 @Repository
 @Mapper
 public interface QuestionMapper {
+
+    /**
+     * 根据问题id，查询问题的相关信息，包括 问题+作者信息
+     *
+     * @param questionId
+     * @return
+     */
+    QuestionDetailsVo selectQuestionDetailsByQuestionId(Long questionId);
 
     /**
      * 分页查询最新的问题list

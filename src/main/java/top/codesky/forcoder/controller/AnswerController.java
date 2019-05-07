@@ -5,13 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import top.codesky.forcoder.common.Constants;
+import top.codesky.forcoder.common.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.vo.AnswerAddVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.AnswerService;
-import top.codesky.forcoder.common.Constants;
-
-import javax.servlet.http.HttpSession;
 
 /**
  * @Date: 2019/4/20 12:05
@@ -30,30 +29,31 @@ public class AnswerController {
         this.answerService = answerService;
     }
 
+    /**H
+     * 添加回答
+     *
+     * @param answerAddVo
+     * @param userInfo
+     * @return
+     */
     @PostMapping(path = "/answer")
-    public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo, HttpSession httpSession) {
-        ResponseVo responseVo = new ResponseVo();
+    public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
+                                @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
         if (answerAddVo.getQuestionId() == null || StringUtils.isEmpty(answerAddVo.getContent())) {
-            responseVo.setCode(600);
-            responseVo.setMsg("回答内容为空");
-            return responseVo;
+            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
 
         try {
-            UserInfo userInfo = (UserInfo) httpSession.getAttribute(Constants.USER_INFO_SESSION_TKEY);
             if (answerService.addAnswer(answerAddVo.getQuestionId(), userInfo.getId()
                     , answerAddVo.getContent())) {
-                responseVo.setCode(200);
-                responseVo.setMsg("添加回答成功");
-                return responseVo;
+                return ResponseVo.success(ResultCodeEnum.SUCCESS);
             }
+
         } catch (Exception e) {
             logger.error("添加回答失败：{}", e.getMessage());
         }
 
-        responseVo.setCode(600);
-        responseVo.setMsg("添加回答失败");
-        return responseVo;
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -64,17 +64,14 @@ public class AnswerController {
      */
     @GetMapping(path = "/answer/{answer_id}")
     public ResponseVo getAnswer(@PathVariable("answer_id") long answerId) {
-        ResponseVo responseVo = new ResponseVo();
 
         try {
-
+            return ResponseVo.success(ResultCodeEnum.SUCCESS);
         } catch (Exception e) {
             logger.error("添加回答失败：{}", e.getMessage());
         }
 
-        responseVo.setCode(600);
-        responseVo.setMsg("添加回答失败");
-        return responseVo;
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 }

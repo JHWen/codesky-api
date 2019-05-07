@@ -8,15 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.Constants;
 import top.codesky.forcoder.common.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
-import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
-import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
-import top.codesky.forcoder.model.vo.QuestionAddVo;
-import top.codesky.forcoder.model.vo.QuestionDetailsVo;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.vo.*;
+import top.codesky.forcoder.service.AnswerService;
 import top.codesky.forcoder.service.QuestionService;
-import top.codesky.forcoder.service.UserService;
 
 import java.util.List;
 
@@ -31,12 +27,12 @@ public class QuestionController {
     private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
     private final QuestionService questionService;
-    private final UserService userService;
+    private final AnswerService answerService;
 
     @Autowired
-    public QuestionController(QuestionService questionService, UserService userService) {
+    public QuestionController(QuestionService questionService, AnswerService answerService) {
         this.questionService = questionService;
-        this.userService = userService;
+        this.answerService = answerService;
     }
 
     /**
@@ -74,23 +70,26 @@ public class QuestionController {
 
     /**
      * 获取问题的详细信息
+     * 还要获取对应的回答数据
      *
      * @param questionId
      * @return
      */
     @GetMapping(path = "/question/{questionId}")
     public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId) {
+        if (questionId < 0) {
+            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
+        }
 
         try {
-            Question question = questionService.getQuestionById(questionId);
-            if (question != null) {
-                // 获取提问者信息
-                UserAdditionInfo userAdditionInfo = userService.getPublicationsOfMember(question.getAuthorId());
-                if (userAdditionInfo != null) {
-                    QuestionDetailsVo questionDetailsVo = new QuestionDetailsVo(question);
-                    questionDetailsVo.setAuthor(new PublicationsOfMemberVo(userAdditionInfo));
-                    return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
-                }
+            //返回数据包括：问题信息，作者信息，回答信息（默认按时间降序排序）
+            QuestionDetailsVo questionDetailsVo = questionService.getQuestionDetailsByQuestionId(questionId);
+
+            if (questionDetailsVo != null) {
+                // 获取回答列表
+                List<AnswerDetailsVo> answers = answerService.getAnswersByQuestionId(questionDetailsVo.getId());
+                questionDetailsVo.setAnswers(answers);
+                return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
             }
         } catch (Exception e) {
             logger.error("获取问题详细信息失败：{}", e.getMessage());
