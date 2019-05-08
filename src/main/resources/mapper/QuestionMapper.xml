@@ -256,7 +256,7 @@
                avatar_url,
                headline,
                business,
-               gmt_created,
+               gmt_create,
                gmt_modified
         from user_addition_info
         where user_id = #{id,jdbcType=BIGINT}
@@ -270,7 +270,7 @@
             <arg column="avatar_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="gmt_created" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
             <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         </constructor>
     </resultMap>

@@ -14,7 +14,7 @@ public class AnswerDetailsVo {
     private int commentCount;
     private int voteupCount;
     private boolean anonymously;
-    private Date gmtCreated;
+    private Date gmtCreate;
     private Date gmtModified;
 
     private PublicationsOfMemberVo author;
@@ -22,14 +22,14 @@ public class AnswerDetailsVo {
     public AnswerDetailsVo() {
     }
 
-    public AnswerDetailsVo(Long id, String content, String excerpt, int commentCount, int voteupCount, boolean anonymously, Date gmtCreated, Date gmtModified, PublicationsOfMemberVo author) {
+    public AnswerDetailsVo(Long id, String content, String excerpt, int commentCount, int voteupCount, boolean anonymously, Date gmtCreate, Date gmtModified, PublicationsOfMemberVo author) {
         this.id = id;
         this.content = content;
         this.excerpt = excerpt;
         this.commentCount = commentCount;
         this.voteupCount = voteupCount;
         this.anonymously = anonymously;
-        this.gmtCreated = gmtCreated;
+        this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.author = author;
     }
@@ -82,12 +82,12 @@ public class AnswerDetailsVo {
         this.anonymously = anonymously;
     }
 
-    public Date getGmtCreated() {
-        return gmtCreated;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
-    public void setGmtCreated(Date gmtCreated) {
-        this.gmtCreated = gmtCreated;
+    public void setGmtCreate(Date gmtCreated) {
+        this.gmtCreate = gmtCreated;
     }
 
     public Date getGmtModified() {

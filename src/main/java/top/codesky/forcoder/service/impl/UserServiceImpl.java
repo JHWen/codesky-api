@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
         userAdditionInfo.setUsername(userAuthenticationInfo.getUsername());
         userAdditionInfo.setUserId(userAuthenticationInfo.getId());
-        userAdditionInfo.setGmtCreated(currentDate);
+        userAdditionInfo.setGmtCreate(currentDate);
         userAdditionInfo.setGmtModified(currentDate);
 
         //2.插入用户描述信息

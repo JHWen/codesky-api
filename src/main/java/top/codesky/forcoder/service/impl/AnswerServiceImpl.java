@@ -36,7 +36,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setAnonymously(false);
 
         Date currentDate = new Date();
-        answer.setGmtCreated(currentDate);
+        answer.setGmtCreate(currentDate);
         answer.setGmtModified(currentDate);
 
         //提取出部分的回答摘要
