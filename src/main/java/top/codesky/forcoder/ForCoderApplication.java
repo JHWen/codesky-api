@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"top.codesky.forcoder.dao_backup","top.codesky.forcoder.dao"})
+@MapperScan(basePackages = {"top.codesky.forcoder.dao"})
 public class ForCoderApplication {
 
     public static void main(String[] args) {
