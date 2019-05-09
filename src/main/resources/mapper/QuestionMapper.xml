@@ -231,22 +231,10 @@
                gmt_modified,
                author_id
         FROM question
-        ORDER BY gmt_create
+        ORDER BY gmt_create DESC
         LIMIT #{offset,jdbcType=BIGINT},#{limit,jdbcType=BIGINT};
     </select>
 
-    <select id="selectAuthorById" parameterType="Long" resultMap="authorResultMap">
-        select user_id,
-               username,
-               gender,
-               avatar_url,
-               headline,
-               business,
-               gmt_created,
-               gmt_modified
-        from user_addition_info
-        where user_id = #{id,jdbcType=BIGINT}
-    </select>
 
     <resultMap id="questionResultMap" type="QuestionWithAuthor">
         <id column="question_id" jdbcType="BIGINT" javaType="Long" property="id"/>
@@ -260,6 +248,20 @@
         <association property="author" column="author_id" select="selectAuthorById"/>
     </resultMap>
 
+
+    <select id="selectAuthorById" parameterType="Long" resultMap="authorResultMap">
+        select user_id,
+               username,
+               gender,
+               avatar_url,
+               headline,
+               business,
+               gmt_create,
+               gmt_modified
+        from user_addition_info
+        where user_id = #{id,jdbcType=BIGINT}
+    </select>
+
     <resultMap id="authorResultMap" type="PublicationsOfMemberVo">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
@@ -268,9 +270,37 @@
             <arg column="avatar_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="gmt_created" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
             <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         </constructor>
+    </resultMap>
+
+
+    <!--  根据问题id，查询问题的相关信息，包括 问题+作者信息  -->
+    <select id="selectQuestionDetailsByQuestionId" parameterType="Long" resultMap="questionDetailsResultMap">
+        SELECT id AS question_id,
+               title,
+               content,
+               answer_count,
+               comment_count,
+               follower_count,
+               gmt_create,
+               gmt_modified,
+               author_id
+        FROM question
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <resultMap id="questionDetailsResultMap" type="QuestionDetailsVo">
+        <id column="question_id" jdbcType="BIGINT" javaType="Long" property="id"/>
+        <result column="title" jdbcType="VARCHAR" javaType="String" property="title"/>
+        <result column="content" jdbcType="LONGVARCHAR" javaType="String" property="content"/>
+        <result column="answer_count" jdbcType="INTEGER" javaType="_int" property="answerCount"/>
+        <result column="comment_count" jdbcType="INTEGER" javaType="_int" property="commentCount"/>
+        <result column="follower_count" jdbcType="INTEGER" javaType="_int" property="followerCount"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" javaType="Date" property="gmtCreate"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" javaType="Date" property="gmtModified"/>
+        <association property="author" column="author_id" select="selectAuthorById"/>
     </resultMap>
 
 </mapper>

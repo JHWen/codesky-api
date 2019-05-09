@@ -2,9 +2,7 @@ package top.codesky.forcoder.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,12 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import top.codesky.forcoder.security.filter.CustomLoginAuthenticationFilter;
-
-import java.util.Arrays;
 
 @EnableWebSecurity(debug = false)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -41,9 +34,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final LogoutSuccessHandler logoutSuccessHandler;
 
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${http.cors.allowed-origin}")
-    private String allowedOrigin;
 
     @Autowired
     public SpringSecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler,
@@ -80,9 +70,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterAt(customLoginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        //添加跨域请求配置
-        http.cors();
-
         //设置注销拦截器
         http.logout()
                 .logoutUrl("/api/logout")
@@ -106,29 +93,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationManager(this.authenticationManager());
         filter.setFilterProcessesUrl("/api/login");
         return filter;
-    }
-
-    /**
-     * 配置允许跨域请求拦截器
-     *
-     * @return
-     */
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        //配置跨域请求
-        CorsConfiguration corsConfig = new CorsConfiguration();
-
-        corsConfig.setAllowedMethods(Arrays.asList(HttpMethod.POST.name(), HttpMethod.PUT.name(),
-                HttpMethod.GET.name(), HttpMethod.DELETE.name(), HttpMethod.OPTIONS.name()));
-        corsConfig.addAllowedOrigin(allowedOrigin);
-        corsConfig.addAllowedHeader("content-type");
-        corsConfig.setMaxAge(60L * 60L * 10L);
-        corsConfig.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
-        configSource.registerCorsConfiguration("/**", corsConfig);
-
-        return configSource;
     }
 
     /**

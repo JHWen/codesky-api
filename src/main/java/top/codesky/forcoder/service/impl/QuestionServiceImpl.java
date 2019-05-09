@@ -6,6 +6,7 @@ import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.params.QuestionDeleteParams;
+import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 import top.codesky.forcoder.service.QuestionService;
 
 import java.util.Date;
@@ -59,6 +60,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<QuestionWithAuthor> getLatestQuestions(long offset, long limit) {
         return questionMapper.selectLatestQuestionByPage(offset, limit);
+    }
+
+    @Override
+    public QuestionDetailsVo getQuestionDetailsByQuestionId(Long questionId) {
+        return questionMapper.selectQuestionDetailsByQuestionId(questionId);
     }
 
 }

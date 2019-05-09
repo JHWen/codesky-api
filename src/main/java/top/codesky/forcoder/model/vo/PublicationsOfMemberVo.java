@@ -14,20 +14,20 @@ public class PublicationsOfMemberVo {
     private String avatarUrl;
     private String headline;
     private String business;
-    private Date gmtCreated;
+    private Date gmtCreate;
     private Date gmtModified;
 
     public PublicationsOfMemberVo() {
     }
 
-    public PublicationsOfMemberVo(Long id, String username, short gender, String avatarUrl, String headline, String business, Date gmtCreated, Date gmtModified) {
+    public PublicationsOfMemberVo(Long id, String username, short gender, String avatarUrl, String headline, String business, Date gmtCreate, Date gmtModified) {
         this.id = id;
         this.username = username;
         this.gender = gender;
         this.avatarUrl = avatarUrl;
         this.headline = headline;
         this.business = business;
-        this.gmtCreated = gmtCreated;
+        this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
     }
 
@@ -38,7 +38,7 @@ public class PublicationsOfMemberVo {
         this.avatarUrl = userAdditionInfo.getAvatarUrl();
         this.headline = userAdditionInfo.getHeadline();
         this.business = userAdditionInfo.getBusiness();
-        this.gmtCreated = userAdditionInfo.getGmtCreated();
+        this.gmtCreate = userAdditionInfo.getGmtCreate();
         this.gmtModified = userAdditionInfo.getGmtModified();
     }
 
@@ -90,12 +90,12 @@ public class PublicationsOfMemberVo {
         this.business = business;
     }
 
-    public Date getGmtCreated() {
-        return gmtCreated;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
-    public void setGmtCreated(Date gmtCreated) {
-        this.gmtCreated = gmtCreated;
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
     public Date getGmtModified() {
@@ -114,7 +114,7 @@ public class PublicationsOfMemberVo {
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", headline='" + headline + '\'' +
                 ", business='" + business + '\'' +
-                ", gmtCreated=" + gmtCreated +
+                ", gmtCreated=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
                 '}';
     }
