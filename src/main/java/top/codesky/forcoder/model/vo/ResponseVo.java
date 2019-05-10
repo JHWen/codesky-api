@@ -1,6 +1,6 @@
 package top.codesky.forcoder.model.vo;
 
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 
 /**
  * @Date: 2019/4/18 15:43

@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.common.Constants;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.vo.AnswerAddVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
@@ -38,7 +38,7 @@ public class AnswerController {
      */
     @PostMapping(path = "/answer")
     public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
-                                @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
         if (answerAddVo.getQuestionId() == null || StringUtils.isEmpty(answerAddVo.getContent())) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }

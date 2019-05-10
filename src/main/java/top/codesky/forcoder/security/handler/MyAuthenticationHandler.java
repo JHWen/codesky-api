@@ -9,8 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import top.codesky.forcoder.common.Constants;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
@@ -36,7 +36,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
         // 考虑Principal改为一个字符串，隐藏用户的密码
         UserForAuthentication userForAuthentication = (UserForAuthentication) authentication.getPrincipal();
         UserInfo userInfo = new UserInfo(userForAuthentication.getId(), userForAuthentication.getUsername());
-        session.setAttribute(Constants.USER_INFO_SESSION_TKEY, userInfo);
+        session.setAttribute(Base.USER_INFO_SESSION_TKEY, userInfo);
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.OK.value());

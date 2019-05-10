@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.common.Constants;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
@@ -44,7 +44,7 @@ public class QuestionController {
      */
     @PostMapping(path = "/question")
     public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo,
-                                  @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                  @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
 
         if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
                 StringUtils.isEmpty(questionRequestVo.getContent()) || userInfo == null) {
@@ -107,7 +107,7 @@ public class QuestionController {
      */
     @DeleteMapping(path = "/question/{questionId}")
     public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId,
-                                     @SessionAttribute(Constants.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                     @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
 
         try {
             if (questionService.deleteQuestion(questionId, userInfo.getId())) {

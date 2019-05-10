@@ -1,4 +1,4 @@
-package top.codesky.forcoder.common;
+package top.codesky.forcoder.common.constant;
 
 /**
  * @Date: 2019/5/5 11:58

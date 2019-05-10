@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.common.Constants;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
@@ -39,7 +39,7 @@ public class UserController {
      * @return 个人信息
      */
     @GetMapping(path = "/me")
-    public ResponseVo getInfoAboutMe(@SessionAttribute(Constants.USER_INFO_SESSION_TKEY)
+    public ResponseVo getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_TKEY)
                                              UserInfo userInfo) {
 
         if (userInfo == null || StringUtils.isEmpty(userInfo.getUsername())

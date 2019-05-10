@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.dao.UserAdditionInfoMapper;
 import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;

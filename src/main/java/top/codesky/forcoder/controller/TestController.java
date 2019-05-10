@@ -3,7 +3,7 @@ package top.codesky.forcoder.controller;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.common.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
 import top.codesky.forcoder.model.vo.LoginRequestVo;
