@@ -1,11 +1,13 @@
 package top.codesky.forcoder.util;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
+import org.springframework.util.StringUtils;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
 
+import java.net.URI;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @Date: 2019/5/5 11:30
@@ -46,6 +48,41 @@ public class CodeskyUtils {
      */
     public static String cleanHtml(String html) {
         return Jsoup.clean(html, whitelist);
+    }
+
+
+    /**
+     * uuid对文件进行重命名
+     * todo:改进方法，使用文件的hash值对文件去重
+     *
+     * @param oldFilename 原文件名
+     * @return 新文件名
+     */
+    public static String renameFile(String oldFilename) {
+        if (StringUtils.isEmpty(oldFilename)) {
+            throw new NullPointerException("filename is empty!");
+        }
+        String suffixName = oldFilename.substring(oldFilename.lastIndexOf("."));
+        return generateUUID() + suffixName;
+    }
+
+    private static String generateUUID() {
+        return UUID.randomUUID()
+                .toString()
+                .replace("-", "");
+    }
+
+    /**
+     * 获取文件在服务器上的访问地址
+     *
+     * @param baseUrl  基础URL
+     * @param filename 文件名
+     * @return
+     */
+    public static String getFileUrl(String baseUrl, String filename) {
+        return URI.create(baseUrl)
+                .resolve(filename)
+                .toString();
     }
 
 }
