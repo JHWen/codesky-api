@@ -21,6 +21,7 @@ import java.util.List;
  * @Author: codesky
  * @Description: 关注功能：关注用户或问题等
  */
+
 @Api(tags = {"关注(问题、用户)功能接口"})
 @RestController
 @RequestMapping(path = "/api")
@@ -38,6 +39,7 @@ public class FollowController {
         this.userService = userService;
     }
 
+    @ApiOperation(value = "关注问题", notes = "返回该问题的关注数")
     @PostMapping(path = "/question/{questionId}/follow")
     public ResponseVo followQuestion(@PathVariable("questionId") long questionId,
                                      @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -58,6 +60,7 @@ public class FollowController {
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
+    @ApiOperation(value = "取关问题", notes = "返回该问题的关注数")
     @DeleteMapping(path = "/question/{questionId}/follow")
     public ResponseVo unfollowQuestion(@PathVariable("questionId") long questionId,
                                        @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -78,6 +81,7 @@ public class FollowController {
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
+    @ApiOperation(value = "关注用户", notes = "返回该用户的粉丝(关注)数")
     @PostMapping(path = "/member/{memberId}/follow")
     public ResponseVo followMember(@PathVariable("memberId") long memberId,
                                    @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -98,6 +102,7 @@ public class FollowController {
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
+    @ApiOperation(value = "取关用户", notes = "返回该用户的粉丝(关注)数")
     @DeleteMapping(path = "/member/{memberId}/follow")
     public ResponseVo unfollowMember(@PathVariable("memberId") long memberId,
                                      @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -126,6 +131,7 @@ public class FollowController {
      * @param limit
      * @return
      */
+    @ApiOperation(value = "获取该用户的粉丝列表", notes = "返回该用户的粉丝列表（分页查询）")
     @GetMapping(path = "/member/{memberId}/followers")
     public ResponseVo followersOfMember(@PathVariable("memberId") long memberId,
                                         @RequestParam("offset") long offset,
@@ -152,6 +158,7 @@ public class FollowController {
      *
      * @return
      */
+    @ApiOperation(value = "获取该用户关注的人列表", notes = "返回该用户的关注的人列表（分页查询）")
     @GetMapping(path = "/member/{memberId}/followees")
     public ResponseVo followeesOfMember(@PathVariable("memberId") long memberId,
                                         @RequestParam("offset") long offset,

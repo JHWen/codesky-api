@@ -1,5 +1,7 @@
 package top.codesky.forcoder.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import top.codesky.forcoder.service.VoteService;
  * @Author: codesky
  * @Description: 点赞、点赞控制层
  */
+@Api(tags = {"赞踩功能接口"})
 @RestController
 @RequestMapping(path = "/api")
 public class VoteController {
@@ -39,6 +42,7 @@ public class VoteController {
      * @param userInfo
      * @return
      */
+    @ApiOperation(value = "对回答点赞、点踩或保持中立", notes = "返回当前回答的点赞数")
     @PostMapping(path = "/answer/{answerId}/vote")
     public ResponseVo voteAnswer(@PathVariable("answerId") long answerId,
                                  @RequestBody VotePostVo votePostVo,

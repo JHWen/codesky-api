@@ -1,5 +1,7 @@
 package top.codesky.forcoder.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
+import top.codesky.forcoder.model.vo.LoginRequestVo;
 import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.RegisterUserVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
@@ -19,6 +22,7 @@ import top.codesky.forcoder.service.UserService;
  * @Author: codesky
  * @Description: 用户相关的控制层
  */
+@Api(tags = {"用户管理接口"})
 @RestController
 @RequestMapping(path = "/api")
 public class UserController {
@@ -38,6 +42,7 @@ public class UserController {
      *
      * @return 个人信息
      */
+    @ApiOperation(value = "获取当前登录用户的个人信息", notes = "返回当前登录用户的个人信息")
     @GetMapping(path = "/me")
     public ResponseVo getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_TKEY)
                                              UserInfo userInfo) {
@@ -97,6 +102,7 @@ public class UserController {
      * @param registerUserVo 封装用户注册信息 bean
      * @return 注册结果
      */
+    @ApiOperation(value = "获取用户的公开个人信息", notes = "返回该用户的公开个人信息")
     @PostMapping(path = "/register")
     public ResponseVo register(@RequestBody RegisterUserVo registerUserVo) {
 
@@ -117,6 +123,18 @@ public class UserController {
         }
 
         return ResponseVo.error(ResultCodeEnum.USER_REGISTER_ERROR);
+    }
+
+    @ApiOperation(value = "用户登录", notes = "返回登录结果")
+    @PostMapping(path = "/login")
+    public ResponseVo login(@RequestBody LoginRequestVo loginRequestVo) {
+        return ResponseVo.success(ResultCodeEnum.SUCCESS);
+    }
+
+    @ApiOperation(value = "用户注销", notes = "返回注销结果")
+    @PostMapping(path = "/logout")
+    public ResponseVo logout() {
+        return ResponseVo.success(ResultCodeEnum.SUCCESS);
     }
 
 }

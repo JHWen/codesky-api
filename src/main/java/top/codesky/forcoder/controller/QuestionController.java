@@ -1,5 +1,7 @@
 package top.codesky.forcoder.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.List;
  * @Author: codesky
  * @Description: 问题相关的控制层
  */
+@Api(tags = "问题功能接口")
 @RestController
 @RequestMapping(path = "/api")
 public class QuestionController {
@@ -42,6 +45,7 @@ public class QuestionController {
      * @param userInfo
      * @return
      */
+    @ApiOperation(value = "添加问题，即提问", notes = "返回操作结果，包含问题的相关信息")
     @PostMapping(path = "/question")
     public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo,
                                   @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -75,6 +79,7 @@ public class QuestionController {
      * @param questionId
      * @return
      */
+    @ApiOperation(value = "获取对应问题的详细信息", notes = "返回问题的详细信息，包含问题的相关回答数据")
     @GetMapping(path = "/question/{questionId}")
     public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId) {
         if (questionId < 0) {
@@ -105,6 +110,7 @@ public class QuestionController {
      * @param userInfo
      * @return
      */
+    @ApiOperation(value = "删除问题", notes = "返回操作结果")
     @DeleteMapping(path = "/question/{questionId}")
     public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId,
                                      @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -126,6 +132,7 @@ public class QuestionController {
      *
      * @return
      */
+    @ApiOperation(value = "获取最新的问题", notes = "返回最新的问题列表（分页查询结果）")
     @GetMapping(path = "/questions/latest")
     public ResponseVo getLatestQuestions(@RequestParam(name = "offset") long offset,
                                          @RequestParam(name = "limit") long limit) {

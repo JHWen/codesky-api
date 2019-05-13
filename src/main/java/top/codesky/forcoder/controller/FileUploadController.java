@@ -1,5 +1,7 @@
 package top.codesky.forcoder.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import top.codesky.forcoder.util.CodeskyUtils;
  * @Author: codesky
  * @Description: 文件上传控制层
  */
+@Api(tags = {"文件上传接口"})
 @RestController
 public class FileUploadController {
     private final StorageService storageService;
@@ -33,6 +36,7 @@ public class FileUploadController {
     }
 
 
+    @ApiOperation(value = "上传文件", notes = "返回上传文件的访问url")
     @PostMapping(path = "/upload")
     public ResponseVo uploadFile(@RequestParam(name = "file") MultipartFile multipartFile) {
         String filename = storageService.store(multipartFile);

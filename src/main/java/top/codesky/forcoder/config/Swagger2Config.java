@@ -34,8 +34,8 @@ public class Swagger2Config {
         Contact contact = new Contact("codesky", "codesky.top", "super_codesky@163.com");
         return new ApiInfoBuilder()
                 .title("SpringBoot基于Swagger2构建的RESTful API文档")
-                .description("更多请关注：http://codesky.top")
-                .termsOfServiceUrl("http://codesky.top")
+                .description("更多请关注：http://api.codesky.top/swagger-ui.html")
+                .termsOfServiceUrl("http://api.codesky.top")
                 .contact(contact)
                 .version("1.0")
                 .build();

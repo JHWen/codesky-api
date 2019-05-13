@@ -1,5 +1,7 @@
 package top.codesky.forcoder.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import top.codesky.forcoder.service.AnswerService;
  * @Author: codesky
  * @Description: 回答相关的控制层
  */
+@Api(tags = {"问题回答功能接口"})
 @RestController
 @RequestMapping(path = "/api")
 public class AnswerController {
@@ -29,13 +32,14 @@ public class AnswerController {
         this.answerService = answerService;
     }
 
-    /**H
+    /**
      * 添加回答
      *
      * @param answerAddVo
      * @param userInfo
      * @return
      */
+    @ApiOperation(value = "添加回答", notes = "返回操作结果")
     @PostMapping(path = "/answer")
     public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
                                 @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
@@ -62,6 +66,7 @@ public class AnswerController {
      * @param answerId
      * @return
      */
+    @ApiOperation(value = "获取回答的详细信息", notes = "返回回答的详细信息")
     @GetMapping(path = "/answer/{answer_id}")
     public ResponseVo getAnswer(@PathVariable("answer_id") long answerId) {
 
