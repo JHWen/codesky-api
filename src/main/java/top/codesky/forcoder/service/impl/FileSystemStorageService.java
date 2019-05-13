@@ -9,7 +9,6 @@ import top.codesky.forcoder.common.properties.StorageProperties;
 import top.codesky.forcoder.service.StorageService;
 import top.codesky.forcoder.util.CodeskyUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
