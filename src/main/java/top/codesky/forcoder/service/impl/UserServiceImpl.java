@@ -9,11 +9,13 @@ import top.codesky.forcoder.dao.UserAdditionInfoMapper;
 import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.entity.UserAuthenticationInfo;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
 import top.codesky.forcoder.util.CodeskyUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -93,5 +95,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserAdditionInfo getPublicationsOfMember(String username) {
         return userAdditionInfoMapper.selectByUsername(username);
+    }
+
+    @Override
+    public List<PublicationsOfMemberVo> getMembersByUserIds(List<Long> ids) {
+        return userAdditionInfoMapper.selectMembersByIds(ids);
     }
 }

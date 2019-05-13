@@ -193,5 +193,35 @@
     </select>
 
 
+    <!--  根据一组id，查询用户信息  -->
+    <select id="selectMembersByIds" resultMap="memberResultMap">
+        select
+            user_id,
+            username,
+            gender,
+            avatar_url,
+            headline,
+            business,
+            gmt_create,
+            gmt_modified
+        from
+            user_addition_info
+        where
+            user_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </select>
+
+    <resultMap id="memberResultMap" type="PublicationsOfMemberVo">
+        <id column="user_id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result column="username" property="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" javaType="_short" jdbcType="TINYINT"/>
+        <result column="avatar_url" property="avatarUrl" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="headline" property="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="business" property="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="gmt_create" property="gmtCreate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
 </mapper>
