@@ -136,16 +136,15 @@ public class QuestionController {
     @GetMapping(path = "/questions/latest")
     public ResponseVo getLatestQuestions(@RequestParam(name = "offset") long offset,
                                          @RequestParam(name = "limit") long limit) {
-        ResponseVo responseVo = new ResponseVo();
         if (offset < 0 || limit <= 0 || limit > 10) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
 
         try {
-            List<QuestionWithAuthor> questionWithAuthors = questionService.getLatestQuestions(offset, limit);
-            if (questionWithAuthors != null) {
-                logger.debug("questionWithAuthors：{}", questionWithAuthors);
-                return ResponseVo.success(ResultCodeEnum.SUCCESS, questionWithAuthors);
+            List<QuestionItemVo> questions = questionService.getLatestQuestions(offset, limit);
+            if (questions != null) {
+                logger.debug("questionWithAuthors：{}", questions);
+                return ResponseVo.success(ResultCodeEnum.SUCCESS, questions);
             }
         } catch (Exception e) {
             logger.error("获取问题失败：{}", e.getMessage());

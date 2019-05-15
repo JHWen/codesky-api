@@ -11,6 +11,15 @@ import java.util.List;
 @Repository
 public interface AnswerMapper {
 
+
+    /**
+     * 查询最新的一条回答作为首页问答返回记录
+     *
+     * @param questionId 问题id
+     * @return
+     */
+    AnswerDetailsVo selectAnswerByQuestionId(Long questionId);
+
     /**
      * 获取问题的相关回答 默认10条
      *

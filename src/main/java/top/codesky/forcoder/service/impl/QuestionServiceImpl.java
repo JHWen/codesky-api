@@ -2,13 +2,18 @@ package top.codesky.forcoder.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.codesky.forcoder.common.constant.IndexItemType;
+import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.params.QuestionDeleteParams;
+import top.codesky.forcoder.model.vo.AnswerDetailsVo;
 import top.codesky.forcoder.model.vo.QuestionDetailsVo;
+import top.codesky.forcoder.model.vo.QuestionItemVo;
 import top.codesky.forcoder.service.QuestionService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,10 +21,12 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
+    private final AnswerMapper answerMapper;
 
     @Autowired
-    public QuestionServiceImpl(QuestionMapper questionMapper) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper) {
         this.questionMapper = questionMapper;
+        this.answerMapper = answerMapper;
     }
 
     /**
@@ -58,8 +65,24 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionWithAuthor> getLatestQuestions(long offset, long limit) {
-        return questionMapper.selectLatestQuestionByPage(offset, limit);
+    public List<QuestionItemVo> getLatestQuestions(long offset, long limit) {
+        List<QuestionWithAuthor> questionWithAuthors = questionMapper.selectLatestQuestionByPage(offset, limit);
+        //find one answer for index show
+        List<QuestionItemVo> questions = new ArrayList<>();
+        for(QuestionWithAuthor question : questionWithAuthors) {
+            QuestionItemVo item = new QuestionItemVo();
+            item.setQuestion(question);
+            //find answer
+            AnswerDetailsVo answerDetailsVo = answerMapper.selectAnswerByQuestionId(question.getId());
+            if (answerDetailsVo != null) {
+                item.setType(IndexItemType.answer);
+                item.setAnswer(answerDetailsVo);
+            } else {
+                item.setType(IndexItemType.question);
+            }
+            questions.add(item);
+        }
+        return questions;
     }
 
     @Override

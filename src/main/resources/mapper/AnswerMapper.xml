@@ -232,7 +232,7 @@
                comment_count,
                voteup_count,
                is_anonymously,
-               answer.gmt_create  as answer_gmt_create,
+               answer.gmt_create   as answer_gmt_create,
                answer.gmt_modified as answer_gmt_modified,
                user.user_id        as author_id,
                username,
@@ -240,7 +240,7 @@
                avatar_url,
                headline,
                business,
-               user.gmt_create    as user_gmt_create,
+               user.gmt_create     as user_gmt_create,
                user.gmt_modified   as user_gmt_modified
         from answer
                  left outer join user_addition_info as user on answer.author_id = user.user_id
@@ -269,5 +269,31 @@
             <result column="user_gmt_modified" property="gmtModified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         </association>
     </resultMap>
+
+
+    <!--  查询最新的一条回答作为首页问答返回记录  -->
+    <select id="selectAnswerByQuestionId" parameterType="long" resultMap="answerDetailsResultMap">
+        select a.id              as answer_id,
+               content,
+               excerpt,
+               comment_count,
+               voteup_count,
+               is_anonymously,
+               a.gmt_create      as answer_gmt_create,
+               a.gmt_modified    as answer_gmt_modified,
+               user.user_id      as author_id,
+               username,
+               gender,
+               avatar_url,
+               headline,
+               business,
+               user.gmt_create   as user_gmt_create,
+               user.gmt_modified as user_gmt_modified
+        from answer a
+                 left outer join user_addition_info as user on a.author_id = user.user_id,
+             (select id from answer where question_id = #{id,jdbcType=BIGINT} ORDER BY gmt_modified desc limit 1) b
+        where a.id = b.id;
+    </select>
+
 
 </mapper>
