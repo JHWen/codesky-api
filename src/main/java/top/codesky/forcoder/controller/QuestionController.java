@@ -8,13 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.EntityType;
 import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.vo.*;
 import top.codesky.forcoder.service.AnswerService;
 import top.codesky.forcoder.service.QuestionService;
+import top.codesky.forcoder.service.VoteService;
 
 import java.util.List;
 
@@ -31,11 +32,13 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final VoteService voteService;
 
     @Autowired
-    public QuestionController(QuestionService questionService, AnswerService answerService) {
+    public QuestionController(QuestionService questionService, AnswerService answerService, VoteService voteService) {
         this.questionService = questionService;
         this.answerService = answerService;
+        this.voteService = voteService;
     }
 
     /**
@@ -93,6 +96,10 @@ public class QuestionController {
             if (questionDetailsVo != null) {
                 // 获取回答列表
                 List<AnswerDetailsVo> answers = answerService.getAnswersByQuestionId(questionDetailsVo.getId());
+                for(AnswerDetailsVo answer : answers) {
+                    long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answer.getId());
+                    answer.setVoteupCount((int) voteUpCount);
+                }
                 questionDetailsVo.setAnswers(answers);
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
             }

@@ -2,6 +2,7 @@ package top.codesky.forcoder.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.codesky.forcoder.common.constant.EntityType;
 import top.codesky.forcoder.common.constant.IndexItemType;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.dao.QuestionMapper;
@@ -12,7 +13,9 @@ import top.codesky.forcoder.model.vo.AnswerDetailsVo;
 import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 import top.codesky.forcoder.model.vo.QuestionItemVo;
 import top.codesky.forcoder.service.QuestionService;
+import top.codesky.forcoder.service.VoteService;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +25,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
     private final AnswerMapper answerMapper;
+    private final VoteService voteService;
 
     @Autowired
-    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper, VoteService voteService) {
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
+        this.voteService = voteService;
     }
 
     /**
@@ -75,6 +80,9 @@ public class QuestionServiceImpl implements QuestionService {
             //find answer
             AnswerDetailsVo answerDetailsVo = answerMapper.selectAnswerByQuestionId(question.getId());
             if (answerDetailsVo != null) {
+                //获取点赞数
+                long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answerDetailsVo.getId());
+                answerDetailsVo.setVoteupCount((int) voteUpCount);
                 item.setType(IndexItemType.answer);
                 item.setAnswer(answerDetailsVo);
             } else {
