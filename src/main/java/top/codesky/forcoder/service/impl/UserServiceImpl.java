@@ -9,6 +9,7 @@ import top.codesky.forcoder.dao.UserAdditionInfoMapper;
 import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.entity.UserAuthenticationInfo;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
 import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
@@ -85,6 +86,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserAdditionInfo getUserAdditionInfo(Long userId) {
         return userAdditionInfoMapper.selectByUserId(userId);
+    }
+
+    @Override
+    public boolean updateUserAdditionInfo(UserAdditionInfoUpdateParams params) {
+        return userAdditionInfoMapper.updateByUserIdSelective(params) > 0;
     }
 
     @Override

@@ -196,18 +196,18 @@
     <!--  根据一组id，查询用户信息  -->
     <select id="selectMembersByIds" resultMap="memberResultMap">
         select
-            user_id,
-            username,
-            gender,
-            avatar_url,
-            headline,
-            business,
-            gmt_create,
-            gmt_modified
+        user_id,
+        username,
+        gender,
+        avatar_url,
+        headline,
+        business,
+        gmt_create,
+        gmt_modified
         from
-            user_addition_info
+        user_addition_info
         where
-            user_id in
+        user_id in
         <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
             #{item,jdbcType=BIGINT}
         </foreach>
@@ -224,4 +224,26 @@
         <result column="gmt_modified" property="gmtModified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <!-- 根据userId,选择性更新字段值   -->
+    <update id="updateByUserIdSelective" parameterType="top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams">
+        update user_addition_info
+        <set>
+            <if test="gender != null">
+                gender = #{gender,jdbcType=TINYINT},
+            </if>
+            <if test="avatarUrl != null">
+                avatar_url = #{avatarUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="headline != null">
+                headline = #{headline,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                business = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
 </mapper>

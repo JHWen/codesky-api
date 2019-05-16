@@ -11,11 +11,14 @@ import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
 import top.codesky.forcoder.model.vo.LoginRequestVo;
 import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.RegisterUserVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.UserService;
+
+import java.util.Date;
 
 /**
  * @Date: 2019/4/20 11:38
@@ -74,6 +77,7 @@ public class UserController {
      * @param username 用户名
      * @return 用户的公开信息
      */
+    @ApiOperation(value = "获取用户的公开个人信息", notes = "返回该用户的公开个人信息")
     @GetMapping(path = "/member/{username}/publications")
     public ResponseVo getPublicationsOfMember(@PathVariable(name = "username") String username) {
         if (StringUtils.isEmpty(username)) {
@@ -102,7 +106,7 @@ public class UserController {
      * @param registerUserVo 封装用户注册信息 bean
      * @return 注册结果
      */
-    @ApiOperation(value = "获取用户的公开个人信息", notes = "返回该用户的公开个人信息")
+    @ApiOperation(value = "用户注册", notes = "返回操作结果")
     @PostMapping(path = "/register")
     public ResponseVo register(@RequestBody RegisterUserVo registerUserVo) {
 
@@ -123,6 +127,23 @@ public class UserController {
         }
 
         return ResponseVo.error(ResultCodeEnum.USER_REGISTER_ERROR);
+    }
+
+
+    @ApiOperation(value = "更新用户个人介绍信息", notes = "返回更新结果")
+    @PutMapping(path = "/me")
+    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo,
+                                   @RequestBody UserAdditionInfoUpdateParams params) {
+        logger.debug("UserAdditionInfoUpdateParams:{}", params.toString());
+
+        params.setUserId(userInfo.getId());
+        params.setGmtModified(new Date());
+
+        if (userService.updateUserAdditionInfo(params)) {
+            return ResponseVo.success(ResultCodeEnum.SUCCESS);
+        }
+
+        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     @ApiOperation(value = "用户登录", notes = "返回登录结果")

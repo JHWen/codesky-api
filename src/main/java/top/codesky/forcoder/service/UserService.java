@@ -1,6 +1,7 @@
 package top.codesky.forcoder.service;
 
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
 import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 
@@ -16,6 +17,8 @@ public interface UserService {
     ResponseVo register(String username, String password);
 
     UserAdditionInfo getUserAdditionInfo(Long userId);
+
+    boolean updateUserAdditionInfo(UserAdditionInfoUpdateParams params);
 
     UserAdditionInfo getPublicationsOfMember(Long id);
 
