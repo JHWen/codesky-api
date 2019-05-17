@@ -1,6 +1,6 @@
 package top.codesky.forcoder.model.vo;
 
-import top.codesky.forcoder.common.constant.IndexItemType;
+import top.codesky.forcoder.common.constant.ItemType;
 import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 
 import java.util.Date;
@@ -27,7 +27,7 @@ public class QuestionItemVo {
 
     private Date gmtModified;
 
-    private IndexItemType type;
+    private ItemType type;
 
     private PublicationsOfMemberVo author;
 
@@ -113,11 +113,11 @@ public class QuestionItemVo {
         this.answer = answer;
     }
 
-    public IndexItemType getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(IndexItemType type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
 

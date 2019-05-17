@@ -17,6 +17,8 @@ public class PublicationsOfMemberVo {
     private Date gmtCreate;
     private Date gmtModified;
 
+    private boolean hasFollow;
+
     public PublicationsOfMemberVo() {
     }
 
@@ -106,16 +108,26 @@ public class PublicationsOfMemberVo {
         this.gmtModified = gmtModified;
     }
 
+    public boolean isHasFollow() {
+        return hasFollow;
+    }
+
+    public void setHasFollow(boolean hasFollow) {
+        this.hasFollow = hasFollow;
+    }
+
     @Override
     public String toString() {
         return "PublicationsOfMemberVo{" +
                 "id=" + id +
+                ", username='" + username + '\'' +
                 ", gender=" + gender +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", headline='" + headline + '\'' +
                 ", business='" + business + '\'' +
-                ", gmtCreated=" + gmtCreate +
+                ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
+                ", hasFollow=" + hasFollow +
                 '}';
     }
 }

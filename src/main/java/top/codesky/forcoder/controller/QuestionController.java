@@ -9,11 +9,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.EntityType;
+import top.codesky.forcoder.common.constant.ItemType;
 import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.dto.UserInfo;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.vo.*;
 import top.codesky.forcoder.service.AnswerService;
+import top.codesky.forcoder.service.FollowService;
 import top.codesky.forcoder.service.QuestionService;
 import top.codesky.forcoder.service.VoteService;
 
@@ -33,12 +35,14 @@ public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final VoteService voteService;
+    private final FollowService followService;
 
     @Autowired
-    public QuestionController(QuestionService questionService, AnswerService answerService, VoteService voteService) {
+    public QuestionController(QuestionService questionService, AnswerService answerService, VoteService voteService, FollowService followService) {
         this.questionService = questionService;
         this.answerService = answerService;
         this.voteService = voteService;
+        this.followService = followService;
     }
 
     /**
@@ -84,7 +88,8 @@ public class QuestionController {
      */
     @ApiOperation(value = "获取对应问题的详细信息", notes = "返回问题的详细信息，包含问题的相关回答数据")
     @GetMapping(path = "/question/{questionId}")
-    public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId) {
+    public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId,
+                                         @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
         if (questionId < 0) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
@@ -96,9 +101,12 @@ public class QuestionController {
             if (questionDetailsVo != null) {
                 // 获取回答列表
                 List<AnswerDetailsVo> answers = answerService.getAnswersByQuestionId(questionDetailsVo.getId());
-                for(AnswerDetailsVo answer : answers) {
+                for (AnswerDetailsVo answer : answers) {
                     long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answer.getId());
                     answer.setVoteupCount((int) voteUpCount);
+                    //判断用户之间的关注关系
+                    boolean hasFollow = followService.isFollower(userInfo.getId(), EntityType.MEMBER, answer.getAuthor().getId());
+                    answer.getAuthor().setHasFollow(hasFollow);
                 }
                 questionDetailsVo.setAnswers(answers);
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
@@ -142,7 +150,8 @@ public class QuestionController {
     @ApiOperation(value = "获取最新的问题", notes = "返回最新的问题列表（分页查询结果）")
     @GetMapping(path = "/questions/latest")
     public ResponseVo getLatestQuestions(@RequestParam(name = "offset") long offset,
-                                         @RequestParam(name = "limit") long limit) {
+                                         @RequestParam(name = "limit") long limit,
+                                         @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
         if (offset < 0 || limit <= 0 || limit > 10) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
@@ -151,6 +160,15 @@ public class QuestionController {
             List<QuestionItemVo> questions = questionService.getLatestQuestions(offset, limit);
             if (questions != null) {
                 logger.debug("questionWithAuthors：{}", questions);
+                //处理用户之间的关系以及用户与回答的关系
+                for (QuestionItemVo question : questions) {
+                    if (question.getType() == ItemType.answer) {
+                        question.getAnswer()
+                                .getAuthor()
+                                .setHasFollow(followService.isFollower(userInfo.getId(),
+                                        EntityType.MEMBER, question.getAnswer().getAuthor().getId()));
+                    }
+                }
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, questions);
             }
         } catch (Exception e) {

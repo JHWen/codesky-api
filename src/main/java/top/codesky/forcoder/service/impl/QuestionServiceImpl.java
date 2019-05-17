@@ -3,7 +3,7 @@ package top.codesky.forcoder.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.codesky.forcoder.common.constant.EntityType;
-import top.codesky.forcoder.common.constant.IndexItemType;
+import top.codesky.forcoder.common.constant.ItemType;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
@@ -15,7 +15,6 @@ import top.codesky.forcoder.model.vo.QuestionItemVo;
 import top.codesky.forcoder.service.QuestionService;
 import top.codesky.forcoder.service.VoteService;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +24,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
     private final AnswerMapper answerMapper;
+
     private final VoteService voteService;
 
     @Autowired
@@ -74,7 +74,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionWithAuthor> questionWithAuthors = questionMapper.selectLatestQuestionByPage(offset, limit);
         //find one answer for index show
         List<QuestionItemVo> questions = new ArrayList<>();
-        for(QuestionWithAuthor question : questionWithAuthors) {
+        for (QuestionWithAuthor question : questionWithAuthors) {
             QuestionItemVo item = new QuestionItemVo();
             item.setQuestion(question);
             //find answer
@@ -83,10 +83,10 @@ public class QuestionServiceImpl implements QuestionService {
                 //获取点赞数
                 long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answerDetailsVo.getId());
                 answerDetailsVo.setVoteupCount((int) voteUpCount);
-                item.setType(IndexItemType.answer);
+                item.setType(ItemType.answer);
                 item.setAnswer(answerDetailsVo);
             } else {
-                item.setType(IndexItemType.question);
+                item.setType(ItemType.question);
             }
             questions.add(item);
         }
