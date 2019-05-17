@@ -42,7 +42,7 @@ public class FollowController {
     @ApiOperation(value = "关注问题", notes = "返回该问题的关注数")
     @PostMapping(path = "/question/{questionId}/follow")
     public ResponseVo followQuestion(@PathVariable("questionId") long questionId,
-                                     @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                     @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         try {
             //todo:判断问题是否存在
             //1.判断是否关注，避免重复调用接口
@@ -63,7 +63,7 @@ public class FollowController {
     @ApiOperation(value = "取关问题", notes = "返回该问题的关注数")
     @DeleteMapping(path = "/question/{questionId}/follow")
     public ResponseVo unfollowQuestion(@PathVariable("questionId") long questionId,
-                                       @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                       @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         try {
             //todo:判断问题是否存在
             //1.判断是否关注，避免错误调用接口
@@ -84,7 +84,7 @@ public class FollowController {
     @ApiOperation(value = "关注用户", notes = "返回该用户的粉丝(关注)数")
     @PostMapping(path = "/member/{memberId}/follow")
     public ResponseVo followMember(@PathVariable("memberId") long memberId,
-                                   @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                   @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         try {
             //todo:判断用户/会员是否存在
             //1.判断是否关注，避免重复调用接口
@@ -105,7 +105,7 @@ public class FollowController {
     @ApiOperation(value = "取关用户", notes = "返回该用户的粉丝(关注)数")
     @DeleteMapping(path = "/member/{memberId}/follow")
     public ResponseVo unfollowMember(@PathVariable("memberId") long memberId,
-                                     @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                     @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         try {
             //todo:判断用户/会员是否存在
             //1.判断是否关注，避免错误调用接口

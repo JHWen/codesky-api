@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.entity.QuestionWithAuthor;
+import top.codesky.forcoder.model.vo.QuestionWithAuthor;
 import top.codesky.forcoder.model.params.QuestionDeleteParams;
 import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 

@@ -47,7 +47,7 @@ public class UserController {
      */
     @ApiOperation(value = "获取当前登录用户的个人信息", notes = "返回当前登录用户的个人信息")
     @GetMapping(path = "/me")
-    public ResponseVo getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_TKEY)
+    public ResponseVo getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_KEY)
                                              UserInfo userInfo) {
 
         if (userInfo == null || StringUtils.isEmpty(userInfo.getUsername())
@@ -132,7 +132,7 @@ public class UserController {
 
     @ApiOperation(value = "更新用户个人介绍信息", notes = "返回更新结果")
     @PutMapping(path = "/me")
-    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo,
+    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
                                    @RequestBody UserAdditionInfoUpdateParams params) {
         logger.debug("UserAdditionInfoUpdateParams:{}", params.toString());
 

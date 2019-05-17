@@ -36,7 +36,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
         // 考虑Principal改为一个字符串，隐藏用户的密码
         UserForAuthentication userForAuthentication = (UserForAuthentication) authentication.getPrincipal();
         UserInfo userInfo = new UserInfo(userForAuthentication.getId(), userForAuthentication.getUsername());
-        session.setAttribute(Base.USER_INFO_SESSION_TKEY, userInfo);
+        session.setAttribute(Base.USER_INFO_SESSION_KEY, userInfo);
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.OK.value());

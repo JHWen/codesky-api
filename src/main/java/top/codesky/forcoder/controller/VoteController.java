@@ -46,7 +46,7 @@ public class VoteController {
     @PostMapping(path = "/answer/{answerId}/vote")
     public ResponseVo voteAnswer(@PathVariable("answerId") long answerId,
                                  @RequestBody VotePostVo votePostVo,
-                                 @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                 @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         try {
             VoteResult voteResult = new VoteResult();
 

@@ -2,8 +2,7 @@ package top.codesky.forcoder.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,8 @@ import java.util.List;
 @Api(tags = "问题功能接口")
 @RestController
 @RequestMapping(path = "/api")
+@Slf4j
 public class QuestionController {
-    private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -55,7 +54,7 @@ public class QuestionController {
     @ApiOperation(value = "添加问题，即提问", notes = "返回操作结果，包含问题的相关信息")
     @PostMapping(path = "/question")
     public ResponseVo addQuestion(@RequestBody QuestionAddVo questionRequestVo,
-                                  @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                  @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
 
         if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
                 StringUtils.isEmpty(questionRequestVo.getContent()) || userInfo == null) {
@@ -73,7 +72,7 @@ public class QuestionController {
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, question);
             }
         } catch (Exception e) {
-            logger.error("添加问题失败：{}", e.getMessage());
+            log.error("添加问题失败：{}", e.getMessage());
         }
 
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
@@ -83,13 +82,13 @@ public class QuestionController {
      * 获取问题的详细信息
      * 还要获取对应的回答数据
      *
-     * @param questionId
-     * @return
+     * @param questionId 问题id
+     * @return ResponseVo
      */
     @ApiOperation(value = "获取对应问题的详细信息", notes = "返回问题的详细信息，包含问题的相关回答数据")
     @GetMapping(path = "/question/{questionId}")
     public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId,
-                                         @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                         @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (questionId < 0) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
@@ -99,20 +98,29 @@ public class QuestionController {
             QuestionDetailsVo questionDetailsVo = questionService.getQuestionDetailsByQuestionId(questionId);
 
             if (questionDetailsVo != null) {
+                //判断用户是否关注问题
+                questionDetailsVo.setHasFollow(followService.isFollower(userInfo.getId(),
+                        EntityType.QUESTION, questionDetailsVo.getId()));
+                questionDetailsVo.getAuthor().setHasFollow(followService.isFollower(userInfo.getId(),
+                        EntityType.MEMBER, questionDetailsVo.getAuthor().getId()));
+                questionDetailsVo.setFollowerCount((int) followService.getFollowerCount(EntityType.QUESTION,
+                        questionDetailsVo.getId()));
+
                 // 获取回答列表
                 List<AnswerDetailsVo> answers = answerService.getAnswersByQuestionId(questionDetailsVo.getId());
-                for (AnswerDetailsVo answer : answers) {
+                //处理当前用户点赞关系以及用户之间的关注关系
+                for(AnswerDetailsVo answer : answers) {
                     long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answer.getId());
                     answer.setVoteupCount((int) voteUpCount);
                     //判断用户之间的关注关系
-                    boolean hasFollow = followService.isFollower(userInfo.getId(), EntityType.MEMBER, answer.getAuthor().getId());
-                    answer.getAuthor().setHasFollow(hasFollow);
+                    answer.getAuthor().setHasFollow(followService.isFollower(userInfo.getId(),
+                            EntityType.MEMBER, answer.getAuthor().getId()));
                 }
                 questionDetailsVo.setAnswers(answers);
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
             }
         } catch (Exception e) {
-            logger.error("获取问题详细信息失败：{}", e.getMessage());
+            log.error("获取问题详细信息失败：{}", e.getMessage());
         }
 
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
@@ -128,30 +136,30 @@ public class QuestionController {
     @ApiOperation(value = "删除问题", notes = "返回操作结果")
     @DeleteMapping(path = "/question/{questionId}")
     public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId,
-                                     @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                     @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
 
         try {
             if (questionService.deleteQuestion(questionId, userInfo.getId())) {
                 return ResponseVo.success(ResultCodeEnum.SUCCESS);
             }
         } catch (Exception e) {
-            logger.error("删除问题失败：{}", e.getMessage());
+            log.error("删除问题失败：{}", e.getMessage());
         }
 
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
-     * 获取最新的问题List，根据时间倒序排列，涉及到分页查询
-     * 携带参数 offset limit
+     * 分页获取最新的问题List，按照时间倒序排列
+     * 携带参数 offset , limit
      *
-     * @return
+     * @return ResponseVo
      */
-    @ApiOperation(value = "获取最新的问题", notes = "返回最新的问题列表（分页查询结果）")
+    @ApiOperation(value = "获取最新的问题列表", notes = "返回最新的问题列表（分页查询结果）")
     @GetMapping(path = "/questions/latest")
     public ResponseVo getLatestQuestions(@RequestParam(name = "offset") long offset,
                                          @RequestParam(name = "limit") long limit,
-                                         @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                         @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (offset < 0 || limit <= 0 || limit > 10) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
@@ -159,20 +167,25 @@ public class QuestionController {
         try {
             List<QuestionItemVo> questions = questionService.getLatestQuestions(offset, limit);
             if (questions != null) {
-                logger.debug("questionWithAuthors：{}", questions);
-                //处理用户之间的关系以及用户与回答的关系
-                for (QuestionItemVo question : questions) {
+                log.debug("questionWithAuthors：{}", questions);
+                //处理用户之间的关系以及用户与问题之间关系
+                for(QuestionItemVo question : questions) {
                     if (question.getType() == ItemType.answer) {
+                        //当前用户是否关注答题者
                         question.getAnswer()
                                 .getAuthor()
                                 .setHasFollow(followService.isFollower(userInfo.getId(),
                                         EntityType.MEMBER, question.getAnswer().getAuthor().getId()));
+                    } else if (question.getType() == ItemType.question) {
+                        //当前用户是否关注问题
+                        question.setHasFollow(followService.isFollower(userInfo.getId(),
+                                EntityType.QUESTION, question.getId()));
                     }
                 }
                 return ResponseVo.success(ResultCodeEnum.SUCCESS, questions);
             }
         } catch (Exception e) {
-            logger.error("获取问题失败：{}", e.getMessage());
+            log.error("获取问题失败：{}", e.getMessage());
         }
 
         return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);

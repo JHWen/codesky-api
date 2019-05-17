@@ -62,7 +62,7 @@ public class FileUploadController {
      */
     @ApiOperation(value = "更新用户头像", notes = "返回头像上传结果")
     @PostMapping(path = "/me/avatar")
-    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo,
+    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
                                    @RequestParam("file") MultipartFile multipartFile) {
         //存储头像图片
         String filename = storageService.store(multipartFile);

@@ -7,13 +7,12 @@ import top.codesky.forcoder.common.constant.ItemType;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.entity.QuestionWithAuthor;
 import top.codesky.forcoder.model.params.QuestionDeleteParams;
 import top.codesky.forcoder.model.vo.AnswerDetailsVo;
 import top.codesky.forcoder.model.vo.QuestionDetailsVo;
 import top.codesky.forcoder.model.vo.QuestionItemVo;
+import top.codesky.forcoder.model.vo.QuestionWithAuthor;
 import top.codesky.forcoder.service.QuestionService;
-import top.codesky.forcoder.service.VoteService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,13 +24,10 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionMapper questionMapper;
     private final AnswerMapper answerMapper;
 
-    private final VoteService voteService;
-
     @Autowired
-    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper, VoteService voteService) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper) {
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
-        this.voteService = voteService;
     }
 
     /**
@@ -69,28 +65,34 @@ public class QuestionServiceImpl implements QuestionService {
         return questionMapper.deleteByQuestionIdAndUserId(deleteParams) > 0;
     }
 
+    /**
+     * 分页查询最新的问答数据
+     *
+     * @param offset as pageNum
+     * @param limit  as pageSize
+     * @return List<QuestionItemVo>
+     */
     @Override
     public List<QuestionItemVo> getLatestQuestions(long offset, long limit) {
         List<QuestionWithAuthor> questionWithAuthors = questionMapper.selectLatestQuestionByPage(offset, limit);
-        //find one answer for index show
-        List<QuestionItemVo> questions = new ArrayList<>();
-        for (QuestionWithAuthor question : questionWithAuthors) {
-            QuestionItemVo item = new QuestionItemVo();
-            item.setQuestion(question);
+        //choose one answer for question
+        List<QuestionItemVo> questionItems = new ArrayList<>();
+        for(QuestionWithAuthor questionWithAuthor : questionWithAuthors) {
+            QuestionItemVo questionItem = new QuestionItemVo();
+            questionItem.setQuestion(questionWithAuthor);
             //find answer
-            AnswerDetailsVo answerDetailsVo = answerMapper.selectAnswerByQuestionId(question.getId());
+            AnswerDetailsVo answerDetailsVo = answerMapper.selectAnswerByQuestionId(questionItem.getId());
             if (answerDetailsVo != null) {
-                //获取点赞数
-                long voteUpCount = voteService.getVoteUpCount(EntityType.ANSWER, answerDetailsVo.getId());
-                answerDetailsVo.setVoteupCount((int) voteUpCount);
-                item.setType(ItemType.answer);
-                item.setAnswer(answerDetailsVo);
+                //question+answer
+                questionItem.setType(ItemType.answer);
+                questionItem.setAnswer(answerDetailsVo);
             } else {
-                item.setType(ItemType.question);
+                //only question
+                questionItem.setType(ItemType.question);
             }
-            questions.add(item);
+            questionItems.add(questionItem);
         }
-        return questions;
+        return questionItems;
     }
 
     @Override

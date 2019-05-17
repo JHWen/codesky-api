@@ -1,35 +1,16 @@
 package top.codesky.forcoder.model.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 /**
  * @Date: 2019/4/24 19:12
  * @Author: codesky
  * @Description: 登录后保存在session中的用户信息
  */
-public class UserInfo {
+@Data
+@AllArgsConstructor
+public class UserInfo{
     private Long id;
     private String username;
-
-    public UserInfo() {
-    }
-
-    public UserInfo(long id, String username) {
-        this.username = username;
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

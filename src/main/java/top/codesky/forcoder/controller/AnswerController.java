@@ -42,12 +42,14 @@ public class AnswerController {
     @ApiOperation(value = "添加回答", notes = "返回操作结果")
     @PostMapping(path = "/answer")
     public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
-                                @SessionAttribute(Base.USER_INFO_SESSION_TKEY) UserInfo userInfo) {
+                                @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (answerAddVo.getQuestionId() == null || StringUtils.isEmpty(answerAddVo.getContent())) {
             return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
         }
 
         try {
+            //todo:判断用户是否已经回答
+
             if (answerService.addAnswer(answerAddVo.getQuestionId(), userInfo.getId()
                     , answerAddVo.getContent())) {
                 return ResponseVo.success(ResultCodeEnum.SUCCESS);
