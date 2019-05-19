@@ -2,19 +2,20 @@ package top.codesky.forcoder.model.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import top.codesky.forcoder.common.constant.ItemType;
 
 import java.util.Date;
-import java.util.List;
 
 /**
- * @Date: 2019/4/24 20:07
+ * @Date: 2019/5/15 15:27
  * @Author: codesky
- * @Description: 返回给前端的问题的详细信息，question+author+answer
+ * @Description: 问题+一个回答，用于首页显示
  */
-@Setter
 @Getter
-public class QuestionDetailsVo {
+@Setter
+public class QuestionItemVO {
 
+    private ItemType type;
     private Long id;
     private String title;
     private String content;
@@ -25,10 +26,8 @@ public class QuestionDetailsVo {
     private Date gmtModified;
     private boolean hasFollow;
 
-    //提问者信息
     private PublicationsOfMemberVO author;
 
-    //回答信息
-    private List<AnswerDetailsVo> answers;
+    private AnswerDetailsVO answer;
 
 }

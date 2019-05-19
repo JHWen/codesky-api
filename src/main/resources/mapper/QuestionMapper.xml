@@ -262,15 +262,15 @@
         where user_id = #{id,jdbcType=BIGINT}
     </select>
 
-    <resultMap id="authorResultMap" type="PublicationsOfMemberVo">
-        <id column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
-        <result column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result column="gender" javaType="_short" jdbcType="TINYINT"/>
-        <result column="avatar_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result column="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result column="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        <result column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    <resultMap id="authorResultMap" type="PublicationsOfMemberVO">
+        <id column="user_id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result column="username" property="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" javaType="_short" jdbcType="TINYINT"/>
+        <result column="avatar_url" property="avatarUrl" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="headline" property="headline" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="business" property="business" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="gmt_create" property="gmtCreate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
 
@@ -289,7 +289,7 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
 
-    <resultMap id="questionDetailsResultMap" type="QuestionDetailsVo">
+    <resultMap id="questionDetailsResultMap" type="QuestionDetailsVO">
         <id column="question_id" jdbcType="BIGINT" javaType="Long" property="id"/>
         <result column="title" jdbcType="VARCHAR" javaType="String" property="title"/>
         <result column="content" jdbcType="LONGVARCHAR" javaType="String" property="content"/>

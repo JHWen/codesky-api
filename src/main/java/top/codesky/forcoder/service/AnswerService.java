@@ -1,6 +1,6 @@
 package top.codesky.forcoder.service;
 
-import top.codesky.forcoder.model.vo.AnswerDetailsVo;
+import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public interface AnswerService {
 
     boolean addAnswer(Long questionId, Long authorId, String content);
 
-    List<AnswerDetailsVo> getAnswersByQuestionId(Long questionId);
+    List<AnswerDetailsVO> getAnswersByQuestionId(Long questionId);
 }

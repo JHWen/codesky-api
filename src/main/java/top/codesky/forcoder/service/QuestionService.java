@@ -1,8 +1,8 @@
 package top.codesky.forcoder.service;
 
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.vo.QuestionDetailsVo;
-import top.codesky.forcoder.model.vo.QuestionItemVo;
+import top.codesky.forcoder.model.vo.QuestionDetailsVO;
+import top.codesky.forcoder.model.vo.QuestionItemVO;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface QuestionService {
 
     boolean deleteQuestion(Long questionId, Long userId);
 
-    List<QuestionItemVo> getLatestQuestions(long offset, long limit);
+    List<QuestionItemVO> getLatestQuestions(long offset, long limit);
 
-    QuestionDetailsVo getQuestionDetailsByQuestionId(Long questionId);
+    QuestionDetailsVO getQuestionDetailsByQuestionId(Long questionId);
 }

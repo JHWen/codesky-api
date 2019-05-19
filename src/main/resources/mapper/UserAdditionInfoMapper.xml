@@ -213,7 +213,7 @@
         </foreach>
     </select>
 
-    <resultMap id="memberResultMap" type="PublicationsOfMemberVo">
+    <resultMap id="memberResultMap" type="PublicationsOfMemberVO">
         <id column="user_id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result column="username" property="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result column="gender" property="gender" javaType="_short" jdbcType="TINYINT"/>

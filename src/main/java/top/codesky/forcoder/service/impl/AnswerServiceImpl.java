@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.model.entity.Answer;
-import top.codesky.forcoder.model.vo.AnswerDetailsVo;
+import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 import top.codesky.forcoder.service.AnswerService;
 
 import java.util.Date;
@@ -54,7 +54,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public List<AnswerDetailsVo> getAnswersByQuestionId(Long questionId) {
+    public List<AnswerDetailsVO> getAnswersByQuestionId(Long questionId) {
         return answerMapper.selectAnswersByQuestionId(questionId);
     }
 

@@ -224,7 +224,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <!-- 获取问题的相关回答 默认10条 -->
+    <!-- 获取问题的相关回答 默认8条 -->
     <select id="selectAnswersByQuestionId" parameterType="Long" resultMap="answerDetailsResultMap">
         select answer.id           as answer_id,
                content,
@@ -249,7 +249,7 @@
         limit 0,8
     </select>
 
-    <resultMap id="answerDetailsResultMap" type="AnswerDetailsVo">
+    <resultMap id="answerDetailsResultMap" type="AnswerDetailsVO">
         <id column="answer_id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result column="content" property="content" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
         <result column="excerpt" property="excerpt" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
@@ -258,7 +258,7 @@
         <result column="is_anonymously" property="anonymously" javaType="boolean" jdbcType="BIT"/>
         <result column="answer_gmt_create" property="gmtCreate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result column="answer_gmt_modified" property="gmtModified" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        <association property="author" javaType="PublicationsOfMemberVo">
+        <association property="author" javaType="PublicationsOfMemberVO">
             <id column="author_id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
             <result column="username" property="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <result column="gender" property="gender" javaType="_short" jdbcType="TINYINT"/>

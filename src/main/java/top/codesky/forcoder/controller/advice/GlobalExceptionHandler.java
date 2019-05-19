@@ -2,6 +2,7 @@ package top.codesky.forcoder.controller.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,15 @@ public class GlobalExceptionHandler {
 
         //todo: 读取字段具体校验错误信息返回给前端
 
+        return baseResponse;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        BaseResponse baseResponse = handleBaseException(e);
+        baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        baseResponse.setMessage("Required request body is missing");
         return baseResponse;
     }
 
