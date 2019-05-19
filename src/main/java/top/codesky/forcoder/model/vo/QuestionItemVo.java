@@ -26,7 +26,7 @@ public class QuestionItemVo {
     private Date gmtModified;
     private boolean hasFollow;
 
-    private PublicationsOfMemberVo author;
+    private PublicationsOfMemberVO author;
 
     private AnswerDetailsVo answer;
 

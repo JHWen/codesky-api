@@ -334,20 +334,4 @@ public class UserAdditionInfo {
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
     }
-
-    public static UserAdditionInfo copyOf(UserAdditionInfo userAdditionInfo) {
-        UserAdditionInfo newInstance = new UserAdditionInfo();
-
-        newInstance.id = userAdditionInfo.id;
-        newInstance.username = userAdditionInfo.username;
-        newInstance.userId = userAdditionInfo.userId;
-        newInstance.gender = userAdditionInfo.gender;
-        newInstance.avatarUrl = userAdditionInfo.avatarUrl;
-        newInstance.headline = userAdditionInfo.headline;
-        newInstance.business = userAdditionInfo.business;
-        newInstance.gmtCreate = userAdditionInfo.gmtCreate;
-        newInstance.gmtModified = userAdditionInfo.gmtModified;
-
-        return newInstance;
-    }
 }

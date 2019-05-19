@@ -9,17 +9,17 @@ import java.util.List;
  * @Description: 封装返回粉丝列表
  */
 public class FollowerVo {
-    private List<PublicationsOfMemberVo> followers;
+    private List<PublicationsOfMemberVO> followers;
 
     public FollowerVo() {
         this.followers = new ArrayList<>();
     }
 
-    public List<PublicationsOfMemberVo> getFollowers() {
+    public List<PublicationsOfMemberVO> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<PublicationsOfMemberVo> followers) {
+    public void setFollowers(List<PublicationsOfMemberVO> followers) {
         this.followers.addAll(followers);
     }
 }

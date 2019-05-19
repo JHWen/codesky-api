@@ -1,9 +1,10 @@
 package top.codesky.forcoder.service;
 
+import top.codesky.forcoder.common.constant.RegisterResult;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
-import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
-import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam;
+import top.codesky.forcoder.model.params.UserRegisterParam;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVO;
 
 import java.util.List;
 
@@ -14,15 +15,15 @@ import java.util.List;
  */
 public interface UserService {
 
-    ResponseVo register(String username, String password);
+    RegisterResult register(UserRegisterParam userRegisterParam);
 
     UserAdditionInfo getUserAdditionInfo(Long userId);
 
-    boolean updateUserAdditionInfo(UserAdditionInfoUpdateParams params);
+    boolean updateUserAdditionInfo(UserAdditionInfoUpdateParam params);
 
     UserAdditionInfo getPublicationsOfMember(Long id);
 
     UserAdditionInfo getPublicationsOfMember(String username);
 
-    List<PublicationsOfMemberVo> getMembersByUserIds(List<Long> ids);
+    List<PublicationsOfMemberVO> getMembersByUserIds(List<Long> ids);
 }

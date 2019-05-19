@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.codesky.forcoder.common.constant.Base;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultEnum;
 import top.codesky.forcoder.common.exception.StorageException;
 import top.codesky.forcoder.common.properties.StorageProperties;
-import top.codesky.forcoder.model.dto.UserInfo;
-import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.StorageService;
 import top.codesky.forcoder.service.UserService;
@@ -48,7 +48,7 @@ public class FileUploadController {
     public ResponseVo uploadFile(@RequestParam(name = "file") MultipartFile multipartFile) {
         String filename = storageService.store(multipartFile);
 
-        return ResponseVo.success(ResultCodeEnum.SUCCESS
+        return ResponseVo.success(ResultEnum.SUCCESS
                 , CodeskyUtils.getFileUrl(properties.getRootUrl(), filename));
     }
 
@@ -67,22 +67,22 @@ public class FileUploadController {
         String filename = storageService.store(multipartFile);
         String avatarUrl = CodeskyUtils.getFileUrl(properties.getRootUrl(), filename);
 
-        UserAdditionInfoUpdateParams params = new UserAdditionInfoUpdateParams();
+        UserAdditionInfoUpdateParam params = new UserAdditionInfoUpdateParam();
         params.setUserId(userInfo.getId());
         params.setAvatarUrl(avatarUrl);
         params.setGmtModified(new Date());
 
         if (userService.updateUserAdditionInfo(params)) {
-            return ResponseVo.success(ResultCodeEnum.SUCCESS);
+            return ResponseVo.success(ResultEnum.SUCCESS);
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 
     @ExceptionHandler(StorageException.class)
     public ResponseEntity<ResponseVo> handleStorageFileNotFound(StorageException exc) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR));
+                .body(ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR));
     }
 }

@@ -18,6 +18,10 @@ public class RedisKeyUtil {
     private static final String BIZ_FOLLOWER = "FOLLOWER";
     private static final String BIZ_FOLLOWEE = "FOLLOWEE";
 
+    private RedisKeyUtil() {
+
+    }
+
     //点赞、踩的key
 
     public static String getLikeKey(EntityType entityType, long entityId) {

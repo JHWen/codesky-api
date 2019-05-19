@@ -225,7 +225,7 @@
     </resultMap>
 
     <!-- 根据userId,选择性更新字段值   -->
-    <update id="updateByUserIdSelective" parameterType="top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams">
+    <update id="updateByUserIdSelective" parameterType="top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam">
         update user_addition_info
         <set>
             <if test="gender != null">

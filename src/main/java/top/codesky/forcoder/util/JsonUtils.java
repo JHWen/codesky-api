@@ -19,6 +19,10 @@ public class JsonUtils {
         }
     }
 
+    private JsonUtils() {
+
+    }
+
     public static ObjectMapper getObjectMapper() {
         return ObjectMapperHolder.objectMapper;
     }

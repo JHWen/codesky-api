@@ -25,7 +25,7 @@ import top.codesky.forcoder.security.filter.CustomLoginAuthenticationFilter;
 
 import java.util.Arrays;
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -81,6 +81,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         //添加跨域请求配置
         http.cors();
 
+        //替换默认登录认证拦截器
         http.addFilterAt(customLoginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         //设置注销拦截器
@@ -138,6 +139,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public static BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 }

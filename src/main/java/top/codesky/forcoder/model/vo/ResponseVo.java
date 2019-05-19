@@ -1,6 +1,6 @@
 package top.codesky.forcoder.model.vo;
 
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultEnum;
 
 /**
  * @Date: 2019/4/18 15:43
@@ -45,19 +45,19 @@ public class ResponseVo {
         this.data = data;
     }
 
-    public void setResultCode(ResultCodeEnum resultCode) {
+    public void setResultCode(ResultEnum resultCode) {
         this.setCode(resultCode.code());
         this.setMsg(resultCode.message());
     }
 
     //静态工厂方法
-    public static ResponseVo success(ResultCodeEnum resultCode) {
+    public static ResponseVo success(ResultEnum resultCode) {
         ResponseVo responseVo = new ResponseVo();
         responseVo.setResultCode(resultCode);
         return responseVo;
     }
 
-    public static ResponseVo success(ResultCodeEnum resultCode, Object data) {
+    public static ResponseVo success(ResultEnum resultCode, Object data) {
         ResponseVo responseVo = new ResponseVo();
         responseVo.setResultCode(resultCode);
         responseVo.setData(data);
@@ -65,13 +65,13 @@ public class ResponseVo {
     }
 
 
-    public static ResponseVo error(ResultCodeEnum resultCode) {
+    public static ResponseVo error(ResultEnum resultCode) {
         ResponseVo responseVo = new ResponseVo();
         responseVo.setResultCode(resultCode);
         return responseVo;
     }
 
-    public static ResponseVo error(ResultCodeEnum resultCode, Object data) {
+    public static ResponseVo error(ResultEnum resultCode, Object data) {
         ResponseVo responseVo = new ResponseVo();
         responseVo.setResultCode(resultCode);
         responseVo.setData(data);

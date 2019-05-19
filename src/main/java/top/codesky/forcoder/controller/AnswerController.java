@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
-import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.common.constant.ResultEnum;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.vo.AnswerAddVo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.AnswerService;
@@ -44,7 +44,7 @@ public class AnswerController {
     public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
                                 @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (answerAddVo.getQuestionId() == null || StringUtils.isEmpty(answerAddVo.getContent())) {
-            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
+            return ResponseVo.error(ResultEnum.PARAM_IS_INVALID);
         }
 
         try {
@@ -52,14 +52,14 @@ public class AnswerController {
 
             if (answerService.addAnswer(answerAddVo.getQuestionId(), userInfo.getId()
                     , answerAddVo.getContent())) {
-                return ResponseVo.success(ResultCodeEnum.SUCCESS);
+                return ResponseVo.success(ResultEnum.SUCCESS);
             }
 
         } catch (Exception e) {
             logger.error("添加回答失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -73,12 +73,12 @@ public class AnswerController {
     public ResponseVo getAnswer(@PathVariable("answer_id") long answerId) {
 
         try {
-            return ResponseVo.success(ResultCodeEnum.SUCCESS);
+            return ResponseVo.success(ResultEnum.SUCCESS);
         } catch (Exception e) {
             logger.error("添加回答失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 }

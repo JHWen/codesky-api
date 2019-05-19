@@ -5,7 +5,7 @@ package top.codesky.forcoder.common.constant;
  * @Author: codesky
  * @Description: 自定义服务端返回结果状态码
  */
-public enum ResultCodeEnum {
+public enum ResultEnum {
 
     // 成功 or 失败 状态码
     SUCCESS(0, "success"),
@@ -55,7 +55,7 @@ public enum ResultCodeEnum {
 
     private final String message;
 
-    ResultCodeEnum(int code, String message) {
+    ResultEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }

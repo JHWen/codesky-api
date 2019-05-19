@@ -29,6 +29,6 @@ public class QuestionWithAuthor {
 
     private Date gmtModified;
 
-    private PublicationsOfMemberVo author;
+    private PublicationsOfMemberVO author;
 
 }

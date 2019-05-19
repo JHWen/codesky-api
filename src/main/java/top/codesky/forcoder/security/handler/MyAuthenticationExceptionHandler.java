@@ -9,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import top.codesky.forcoder.model.support.BaseResponse;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.util.JsonUtils;
 
@@ -22,29 +23,45 @@ public class MyAuthenticationExceptionHandler implements AuthenticationEntryPoin
 
     private static final Logger logger = LoggerFactory.getLogger(MyAuthenticationExceptionHandler.class);
 
-    // 异常处理返回操作
+    /**
+     * 未登录，转向登录授权接入点，
+     * 一般在前后端不分离的项目中重定向到登录页面，
+     * RESTful API接口应用返回未授权错误信息
+     *
+     * @param httpServletRequest  HttpServletRequest
+     * @param httpServletResponse HttpServletResponse
+     * @param exception           AuthenticationException
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
-    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        logger.debug("AuthenticationExceptionHandler : {}", e.getMessage());
+    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException exception) throws IOException, ServletException {
+        logger.debug("AuthenticationExceptionHandler in AuthenticationEntryPoint : {}", exception.getMessage());
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        ResponseVo baseResponseVo = new ResponseVo(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
-
-        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), baseResponseVo);
+        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(),
+                BaseResponse.error(HttpStatus.UNAUTHORIZED, exception.getMessage()));
     }
 
-    // 访问拒绝处理操作
+    /**
+     * 未登录，访问拒绝处理操作
+     *
+     * @param httpServletRequest  HttpServletRequest
+     * @param httpServletResponse HttpServletResponse
+     * @param exception           AccessDeniedException
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
-    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
-        logger.debug("Access Deny:{}", e.getMessage());
+    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException exception) throws IOException, ServletException {
+        logger.debug("Access Deny in AccessDeniedHandler caused by : {}", exception.getMessage());
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
 
-        ResponseVo responseVo = new ResponseVo(HttpStatus.FORBIDDEN.value(), e.getMessage());
-
-        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(), responseVo);
+        JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(),
+                BaseResponse.error(HttpStatus.FORBIDDEN, exception.getMessage()));
     }
 }

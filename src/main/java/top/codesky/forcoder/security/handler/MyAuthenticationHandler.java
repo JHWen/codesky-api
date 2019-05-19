@@ -10,10 +10,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import top.codesky.forcoder.common.constant.Base;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
 import top.codesky.forcoder.model.entity.UserForAuthentication;
-import top.codesky.forcoder.model.dto.UserInfo;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.support.BaseResponse;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.util.JsonUtils;
 
 import javax.servlet.ServletException;
@@ -41,20 +40,18 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.setStatus(HttpStatus.OK.value());
 
-        //todo:登录成功返回个人信息
-
         logger.debug("userForAuthentication:{}", userForAuthentication);
 
         JsonUtils.getObjectMapper().writeValue(httpServletResponse.getOutputStream(),
-                ResponseVo.success(ResultCodeEnum.SUCCESS));
+                BaseResponse.success());
     }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
 
         JsonUtils.getObjectMapper().writeValue(response.getOutputStream(),
-                ResponseVo.error(ResultCodeEnum.USER_LOGIN_ERROR));
+                BaseResponse.error(HttpStatus.BAD_REQUEST));
     }
 }

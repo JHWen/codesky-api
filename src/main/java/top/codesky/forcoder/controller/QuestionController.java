@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.EntityType;
 import top.codesky.forcoder.common.constant.ItemType;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
-import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.common.constant.ResultEnum;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.vo.*;
 import top.codesky.forcoder.service.AnswerService;
@@ -59,7 +59,7 @@ public class QuestionController {
         if (StringUtils.isEmpty(questionRequestVo.getTitle()) ||
                 StringUtils.isEmpty(questionRequestVo.getContent()) || userInfo == null) {
 
-            return ResponseVo.error(ResultCodeEnum.PARAM_NOT_COMPLETE);
+            return ResponseVo.error(ResultEnum.PARAM_NOT_COMPLETE);
         }
 
         try {
@@ -69,13 +69,13 @@ public class QuestionController {
 
             if (question != null) {
                 //todo: 添加问题，返回问题信息？ 是否在问题中封装提问者的信息?
-                return ResponseVo.success(ResultCodeEnum.SUCCESS, question);
+                return ResponseVo.success(ResultEnum.SUCCESS, question);
             }
         } catch (Exception e) {
             log.error("添加问题失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -90,7 +90,7 @@ public class QuestionController {
     public ResponseVo getQuestionDetails(@PathVariable("questionId") long questionId,
                                          @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (questionId < 0) {
-            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
+            return ResponseVo.error(ResultEnum.PARAM_IS_INVALID);
         }
 
         try {
@@ -117,13 +117,13 @@ public class QuestionController {
                             EntityType.MEMBER, answer.getAuthor().getId()));
                 }
                 questionDetailsVo.setAnswers(answers);
-                return ResponseVo.success(ResultCodeEnum.SUCCESS, questionDetailsVo);
+                return ResponseVo.success(ResultEnum.SUCCESS, questionDetailsVo);
             }
         } catch (Exception e) {
             log.error("获取问题详细信息失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -140,13 +140,13 @@ public class QuestionController {
 
         try {
             if (questionService.deleteQuestion(questionId, userInfo.getId())) {
-                return ResponseVo.success(ResultCodeEnum.SUCCESS);
+                return ResponseVo.success(ResultEnum.SUCCESS);
             }
         } catch (Exception e) {
             log.error("删除问题失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -161,7 +161,7 @@ public class QuestionController {
                                          @RequestParam(name = "limit") long limit,
                                          @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
         if (offset < 0 || limit <= 0 || limit > 10) {
-            return ResponseVo.error(ResultCodeEnum.PARAM_IS_INVALID);
+            return ResponseVo.error(ResultEnum.PARAM_IS_INVALID);
         }
 
         try {
@@ -182,13 +182,13 @@ public class QuestionController {
                                 EntityType.QUESTION, question.getId()));
                     }
                 }
-                return ResponseVo.success(ResultCodeEnum.SUCCESS, questions);
+                return ResponseVo.success(ResultEnum.SUCCESS, questions);
             }
         } catch (Exception e) {
             log.error("获取问题失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 

@@ -26,7 +26,7 @@ public class QuestionDetailsVo {
     private boolean hasFollow;
 
     //提问者信息
-    private PublicationsOfMemberVo author;
+    private PublicationsOfMemberVO author;
 
     //回答信息
     private List<AnswerDetailsVo> answers;

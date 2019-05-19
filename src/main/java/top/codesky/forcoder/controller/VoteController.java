@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.EntityType;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.ResultEnum;
 import top.codesky.forcoder.common.constant.VoteStatus;
-import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.model.vo.VotePostVo;
 import top.codesky.forcoder.model.vo.VoteResult;
@@ -70,15 +70,15 @@ public class VoteController {
                     break;
                 }
                 default:
-                    return ResponseVo.error(ResultCodeEnum.PARAM_TYPE_BIND_ERROR);
+                    return ResponseVo.error(ResultEnum.PARAM_TYPE_BIND_ERROR);
             }
 
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, voteResult);
+            return ResponseVo.success(ResultEnum.SUCCESS, voteResult);
         } catch (Exception e) {
             logger.error("投票失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 }

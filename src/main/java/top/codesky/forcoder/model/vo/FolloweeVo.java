@@ -9,17 +9,17 @@ import java.util.List;
  * @Description: 封装关注的人列表
  */
 public class FolloweeVo {
-    private List<PublicationsOfMemberVo> followees;
+    private List<PublicationsOfMemberVO> followees;
 
     public FolloweeVo() {
         this.followees = new ArrayList<>();
     }
 
-    public List<PublicationsOfMemberVo> getFollowees() {
+    public List<PublicationsOfMemberVO> getFollowees() {
         return followees;
     }
 
-    public void setFollowees(List<PublicationsOfMemberVo> followees) {
+    public void setFollowees(List<PublicationsOfMemberVO> followees) {
         this.followees.addAll(followees);
     }
 }

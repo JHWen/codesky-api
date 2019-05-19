@@ -2,22 +2,26 @@ package top.codesky.forcoder.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
-import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.common.constant.RegisterResult;
+import top.codesky.forcoder.common.constant.ResultEnum;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
-import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
-import top.codesky.forcoder.model.vo.LoginRequestVo;
-import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
-import top.codesky.forcoder.model.vo.RegisterUserVo;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.params.LoginRequestParam;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam;
+import top.codesky.forcoder.model.params.UserRegisterParam;
+import top.codesky.forcoder.model.support.BaseResponse;
+import top.codesky.forcoder.model.support.UserInfo;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVO;
 import top.codesky.forcoder.service.UserService;
+import top.codesky.forcoder.util.BeanUtils;
 
+import javax.validation.Valid;
 import java.util.Date;
 
 /**
@@ -25,12 +29,12 @@ import java.util.Date;
  * @Author: codesky
  * @Description: 用户相关的控制层
  */
+@Slf4j
 @Api(tags = {"用户管理接口"})
 @RestController
 @RequestMapping(path = "/api")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -41,34 +45,50 @@ public class UserController {
 
 
     /**
-     * 登录成功后，获取个人信息
+     * 新用户注册
+     *
+     * @param userRegisterParam 封装用户注册信息
+     * @return 注册结果
+     */
+    @ApiOperation(value = "用户注册", notes = "返回操作结果")
+    @PostMapping(path = "/register")
+    public ResponseEntity<BaseResponse> register(@RequestBody @Valid UserRegisterParam userRegisterParam) {
+
+        RegisterResult result = userService.register(userRegisterParam);
+
+        if (result == RegisterResult.SUCCESS) {
+            return ResponseEntity.ok()
+                    .body(BaseResponse.success(result.getMessage()));
+        } else {
+            return ResponseEntity.badRequest()
+                    .body(BaseResponse.error(HttpStatus.BAD_REQUEST, result.getMessage()));
+        }
+    }
+
+
+    /**
+     * 获取当前登录用户的个人信息
      *
      * @return 个人信息
      */
     @ApiOperation(value = "获取当前登录用户的个人信息", notes = "返回当前登录用户的个人信息")
     @GetMapping(path = "/me")
-    public ResponseVo getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_KEY)
-                                             UserInfo userInfo) {
+    public ResponseEntity<BaseResponse<PublicationsOfMemberVO>> getInfoAboutMe(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
 
-        if (userInfo == null || StringUtils.isEmpty(userInfo.getUsername())
-                || userInfo.getId() == null) {
-            return ResponseVo.error(ResultCodeEnum.USER_NOT_LOGGED_IN);
+        UserAdditionInfo userAdditionInfo = userService.getUserAdditionInfo(userInfo.getId());
+
+        if (userAdditionInfo == null) {
+            return ResponseEntity.badRequest()
+                    .body(BaseResponse.error(HttpStatus.INTERNAL_SERVER_ERROR));
         }
 
-        try {
-            UserAdditionInfo userAdditionInfo = userService.getUserAdditionInfo(userInfo.getId());
-            if (userAdditionInfo == null) {
-                return ResponseVo.error(ResultCodeEnum.USER_NOT_EXIST);
-            }
+        PublicationsOfMemberVO publicationsOfMemberVO = BeanUtils.copyPropertiesFrom(userAdditionInfo,
+                PublicationsOfMemberVO.class);
+        //注意id的区别
+        publicationsOfMemberVO.setId(userAdditionInfo.getUserId());
 
-            PublicationsOfMemberVo infoOfMeVo = new PublicationsOfMemberVo(userAdditionInfo);
-
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, infoOfMeVo);
-        } catch (Exception e) {
-            logger.error("获取用户个人信息失败：{}", e.getMessage());
-        }
-
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseEntity.ok()
+                .body(BaseResponse.success(publicationsOfMemberVO));
     }
 
     /**
@@ -79,83 +99,57 @@ public class UserController {
      */
     @ApiOperation(value = "获取用户的公开个人信息", notes = "返回该用户的公开个人信息")
     @GetMapping(path = "/member/{username}/publications")
-    public ResponseVo getPublicationsOfMember(@PathVariable(name = "username") String username) {
+    public ResponseEntity<BaseResponse<PublicationsOfMemberVO>> getPublicationsOfMember(@PathVariable(name = "username") String username) {
         if (StringUtils.isEmpty(username)) {
-            return ResponseVo.error(ResultCodeEnum.PARAM_IS_BLANK);
+            return ResponseEntity.badRequest()
+                    .body(BaseResponse.error(HttpStatus.BAD_REQUEST,
+                            ResultEnum.PARAM_IS_BLANK.message()));
         }
 
-        try {
-            UserAdditionInfo userAdditionInfo = userService.getPublicationsOfMember(username);
-            if (userAdditionInfo == null) {
-                return ResponseVo.error(ResultCodeEnum.USER_NOT_EXIST);
-            }
-
-            PublicationsOfMemberVo publicationsOfMemberVo = new PublicationsOfMemberVo(userAdditionInfo);
-
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, publicationsOfMemberVo);
-        } catch (Exception e) {
-            logger.error("获取用户公开信息失败：{}", e.getMessage());
+        UserAdditionInfo userAdditionInfo = userService.getPublicationsOfMember(username);
+        if (userAdditionInfo == null) {
+            return ResponseEntity.badRequest()
+                    .body(BaseResponse.error(HttpStatus.BAD_REQUEST,
+                            ResultEnum.USER_NOT_EXIST.message()));
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
-    }
+        PublicationsOfMemberVO publicationsOfMemberVO = BeanUtils.copyPropertiesFrom(userAdditionInfo,
+                PublicationsOfMemberVO.class);
+        //注意id的区别
+        publicationsOfMemberVO.setId(userAdditionInfo.getUserId());
 
-    /**
-     * 新用户注册
-     *
-     * @param registerUserVo 封装用户注册信息 bean
-     * @return 注册结果
-     */
-    @ApiOperation(value = "用户注册", notes = "返回操作结果")
-    @PostMapping(path = "/register")
-    public ResponseVo register(@RequestBody RegisterUserVo registerUserVo) {
-
-        if (StringUtils.isEmpty(registerUserVo.getUsername()) ||
-                StringUtils.isEmpty(registerUserVo.getPassword()) ||
-                StringUtils.isEmpty(registerUserVo.getCheckPassword())) {
-            return ResponseVo.error(ResultCodeEnum.USER_NAME_OR_PASSWORD_IS_EMPTY);
-        }
-
-        if (!registerUserVo.getPassword().equals(registerUserVo.getCheckPassword())) {
-            return ResponseVo.error(ResultCodeEnum.USER_ENTERED_PASSWORD_DIFFER);
-        }
-
-        try {
-            return userService.register(registerUserVo.getUsername(), registerUserVo.getPassword());
-        } catch (Exception e) {
-            logger.error("注册失败：{}", e.getMessage());
-        }
-
-        return ResponseVo.error(ResultCodeEnum.USER_REGISTER_ERROR);
+        return ResponseEntity.ok(BaseResponse.success(publicationsOfMemberVO));
     }
 
 
     @ApiOperation(value = "更新用户个人介绍信息", notes = "返回更新结果")
     @PutMapping(path = "/me")
-    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
-                                   @RequestBody UserAdditionInfoUpdateParams params) {
-        logger.debug("UserAdditionInfoUpdateParams:{}", params.toString());
+    public ResponseEntity<BaseResponse> updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
+                                                     @RequestBody UserAdditionInfoUpdateParam params) {
+        log.debug("UserAdditionInfoUpdateParam:{}", params.toString());
 
         params.setUserId(userInfo.getId());
         params.setGmtModified(new Date());
 
         if (userService.updateUserAdditionInfo(params)) {
-            return ResponseVo.success(ResultCodeEnum.SUCCESS);
+            return ResponseEntity.ok(BaseResponse.success());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BaseResponse.error(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
     @ApiOperation(value = "用户登录", notes = "返回登录结果")
     @PostMapping(path = "/login")
-    public ResponseVo login(@RequestBody LoginRequestVo loginRequestVo) {
-        return ResponseVo.success(ResultCodeEnum.SUCCESS);
+    public BaseResponse<Object> login(@RequestBody LoginRequestParam loginRequestParam) {
+        return BaseResponse.success(null);
     }
 
     @ApiOperation(value = "用户注销", notes = "返回注销结果")
     @PostMapping(path = "/logout")
-    public ResponseVo logout() {
-        return ResponseVo.success(ResultCodeEnum.SUCCESS);
+    public BaseResponse<Object> logout() {
+        return BaseResponse.success(null);
     }
+
 
 }

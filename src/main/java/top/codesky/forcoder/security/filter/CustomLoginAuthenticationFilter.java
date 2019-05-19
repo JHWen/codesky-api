@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
-import top.codesky.forcoder.model.vo.LoginRequestVo;
+import top.codesky.forcoder.model.params.LoginRequestParam;
 import top.codesky.forcoder.util.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,20 +31,21 @@ public class CustomLoginAuthenticationFilter extends UsernamePasswordAuthenticat
                     "Authentication method not supported: " + request.getMethod());
         }
 
-        LoginRequestVo loginRequestVo;
+        LoginRequestParam loginRequestParam;
         try {
-            loginRequestVo = JsonUtils.getObjectMapper()
-                    .readValue(request.getReader(), LoginRequestVo.class);
+            loginRequestParam = JsonUtils.getObjectMapper()
+                    .readValue(request.getReader(), LoginRequestParam.class);
         } catch (IOException e) {
             throw new AuthenticationServiceException("username or password not provided");
         }
-        if (loginRequestVo == null || StringUtils.isEmpty(loginRequestVo.getUsername())
-                || StringUtils.isEmpty(loginRequestVo.getPassword())) {
+        if (loginRequestParam == null || StringUtils.isEmpty(loginRequestParam.getUsername())
+                || StringUtils.isEmpty(loginRequestParam.getPassword())) {
             throw new AuthenticationServiceException("username or password not provided");
         }
-        logger.debug("filter login request:{}", loginRequestVo);
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequestVo.getUsername(), loginRequestVo.getPassword());
+        logger.debug("filter login request:{}", loginRequestParam);
+
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequestParam.getUsername(), loginRequestParam.getPassword());
 
         this.setDetails(request, authRequest);
 

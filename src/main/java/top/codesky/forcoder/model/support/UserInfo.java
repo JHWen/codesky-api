@@ -1,4 +1,4 @@
-package top.codesky.forcoder.model.dto;
+package top.codesky.forcoder.model.support;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class UserInfo{
-    private Long id;
+public class UserInfo {
+    private long id;
     private String username;
 }

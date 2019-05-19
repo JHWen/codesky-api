@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
 import top.codesky.forcoder.common.constant.EntityType;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
-import top.codesky.forcoder.model.dto.UserInfo;
+import top.codesky.forcoder.common.constant.ResultEnum;
+import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.vo.*;
 import top.codesky.forcoder.service.FollowService;
 import top.codesky.forcoder.service.UserService;
@@ -48,16 +48,16 @@ public class FollowController {
             //1.判断是否关注，避免重复调用接口
             if (!followService.isFollower(userInfo.getId(), EntityType.QUESTION, questionId)) {
                 if (followService.follow(userInfo.getId(), EntityType.QUESTION, questionId)) {
-                    return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+                    return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
                 }
             }
             long followerCount = followService.getFollowerCount(EntityType.QUESTION, questionId);
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, new FollowVo(followerCount));
+            return ResponseVo.success(ResultEnum.SUCCESS, new FollowVo(followerCount));
         } catch (Exception e) {
             loger.error("关注问题失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     @ApiOperation(value = "取关问题", notes = "返回该问题的关注数")
@@ -69,16 +69,16 @@ public class FollowController {
             //1.判断是否关注，避免错误调用接口
             if (followService.isFollower(userInfo.getId(), EntityType.QUESTION, questionId)) {
                 if (followService.unfollow(userInfo.getId(), EntityType.QUESTION, questionId)) {
-                    return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+                    return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
                 }
             }
             long followerCount = followService.getFollowerCount(EntityType.QUESTION, questionId);
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, new FollowVo(followerCount));
+            return ResponseVo.success(ResultEnum.SUCCESS, new FollowVo(followerCount));
         } catch (Exception e) {
             loger.error("取消关注问题失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     @ApiOperation(value = "关注用户", notes = "返回该用户的粉丝(关注)数")
@@ -90,16 +90,16 @@ public class FollowController {
             //1.判断是否关注，避免重复调用接口
             if (!followService.isFollower(userInfo.getId(), EntityType.MEMBER, memberId)) {
                 if (followService.follow(userInfo.getId(), EntityType.MEMBER, memberId)) {
-                    return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+                    return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
                 }
             }
             long followerCount = followService.getFollowerCount(EntityType.MEMBER, memberId);
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, new FollowVo(followerCount));
+            return ResponseVo.success(ResultEnum.SUCCESS, new FollowVo(followerCount));
         } catch (Exception e) {
             loger.error("关注用户失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     @ApiOperation(value = "取关用户", notes = "返回该用户的粉丝(关注)数")
@@ -111,16 +111,16 @@ public class FollowController {
             //1.判断是否关注，避免错误调用接口
             if (followService.isFollower(userInfo.getId(), EntityType.MEMBER, memberId)) {
                 if (followService.unfollow(userInfo.getId(), EntityType.MEMBER, memberId)) {
-                    return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+                    return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
                 }
             }
             long followerCount = followService.getFollowerCount(EntityType.MEMBER, memberId);
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, new FollowVo(followerCount));
+            return ResponseVo.success(ResultEnum.SUCCESS, new FollowVo(followerCount));
         } catch (Exception e) {
             loger.error("取消关注用户失败：{}", e.getMessage());
         }
 
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
 
@@ -143,14 +143,14 @@ public class FollowController {
             //通过id,获取用户信息
             if (idsOfFollowers.size() > 0) {
                 //去mysql数据库查询
-                List<PublicationsOfMemberVo> followers = userService.getMembersByUserIds(idsOfFollowers);
+                List<PublicationsOfMemberVO> followers = userService.getMembersByUserIds(idsOfFollowers);
                 followerVo.setFollowers(followers);
             }
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, followerVo);
+            return ResponseVo.success(ResultEnum.SUCCESS, followerVo);
         } catch (Exception e) {
             loger.error("获取粉丝列表失败:{}", e.getMessage());
         }
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
@@ -169,13 +169,13 @@ public class FollowController {
             //通过id,获取用户信息
             if (idsOfFollowees.size() > 0) {
                 //去mysql数据库查询
-                List<PublicationsOfMemberVo> followers = userService.getMembersByUserIds(idsOfFollowees);
+                List<PublicationsOfMemberVO> followers = userService.getMembersByUserIds(idsOfFollowees);
                 followeeVo.setFollowees(followers);
             }
-            return ResponseVo.success(ResultCodeEnum.SUCCESS, followeeVo);
+            return ResponseVo.success(ResultEnum.SUCCESS, followeeVo);
         } catch (Exception e) {
             loger.error("获取粉丝列表失败:{}", e.getMessage());
         }
-        return ResponseVo.error(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 }

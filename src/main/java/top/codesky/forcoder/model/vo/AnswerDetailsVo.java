@@ -17,12 +17,12 @@ public class AnswerDetailsVo {
     private Date gmtCreate;
     private Date gmtModified;
 
-    private PublicationsOfMemberVo author;
+    private PublicationsOfMemberVO author;
 
     public AnswerDetailsVo() {
     }
 
-    public AnswerDetailsVo(Long id, String content, String excerpt, int commentCount, int voteupCount, boolean anonymously, Date gmtCreate, Date gmtModified, PublicationsOfMemberVo author) {
+    public AnswerDetailsVo(Long id, String content, String excerpt, int commentCount, int voteupCount, boolean anonymously, Date gmtCreate, Date gmtModified, PublicationsOfMemberVO author) {
         this.id = id;
         this.content = content;
         this.excerpt = excerpt;
@@ -98,11 +98,11 @@ public class AnswerDetailsVo {
         this.gmtModified = gmtModified;
     }
 
-    public PublicationsOfMemberVo getAuthor() {
+    public PublicationsOfMemberVO getAuthor() {
         return author;
     }
 
-    public void setAuthor(PublicationsOfMemberVo author) {
+    public void setAuthor(PublicationsOfMemberVO author) {
         this.author = author;
     }
 }

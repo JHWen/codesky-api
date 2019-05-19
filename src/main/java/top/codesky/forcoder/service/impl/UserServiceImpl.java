@@ -4,15 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.codesky.forcoder.common.constant.ResultCodeEnum;
+import top.codesky.forcoder.common.constant.RegisterResult;
 import top.codesky.forcoder.dao.UserAdditionInfoMapper;
 import top.codesky.forcoder.dao.UserAuthenticationInfoMapper;
 import top.codesky.forcoder.model.entity.UserAdditionInfo;
 import top.codesky.forcoder.model.entity.UserAuthenticationInfo;
-import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParams;
-import top.codesky.forcoder.model.vo.PublicationsOfMemberVo;
-import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam;
+import top.codesky.forcoder.model.params.UserRegisterParam;
+import top.codesky.forcoder.model.vo.PublicationsOfMemberVO;
 import top.codesky.forcoder.service.UserService;
+import top.codesky.forcoder.util.BeanUtils;
 import top.codesky.forcoder.util.CodeskyUtils;
 
 import java.util.Date;
@@ -38,26 +39,30 @@ public class UserServiceImpl implements UserService {
     /**
      * 用户注册业务
      *
-     * @param username
-     * @param password
-     * @return
+     * @param userRegisterParam UserRegisterParam
+     * @return RegisterResult 枚举类型，封装注册结果
      */
     @Transactional
     @Override
-    public ResponseVo register(String username, String password) {
-        //1.查询用户名是否已经注册
-        int count = userAuthenticationInfoMapper.selectIfExistByUsername(username);
-        if (count > 0) {
-            return ResponseVo.error(ResultCodeEnum.USER_HAS_EXISTED);
+    public RegisterResult register(UserRegisterParam userRegisterParam) {
+        //1.判断两次密码是否一致
+        if (!userRegisterParam.getPassword().equals(userRegisterParam.getCheckPassword())) {
+            return RegisterResult.USER_ENTERED_PASSWORD_DIFFER;
         }
 
-        //插入两个表 user_authentication_info 和 user_addition_info
+        //2.查询用户名是否已经注册
+        int count = userAuthenticationInfoMapper.selectIfExistByUsername(userRegisterParam.getUsername());
+        if (count > 0) {
+            return RegisterResult.USER_HAS_EXISTED;
+        }
+
+        //3.插入数据到两个表 user_authentication_info 和 user_addition_info
         Date currentDate = new Date();
 
         UserAuthenticationInfo userAuthenticationInfo = new UserAuthenticationInfo();
-        userAuthenticationInfo.setUsername(username);
+        userAuthenticationInfo.setUsername(userRegisterParam.getUsername());
         // 密码+salt哈希
-        userAuthenticationInfo.setPassword(passwordEncoder.encode(password));
+        userAuthenticationInfo.setPassword(passwordEncoder.encode(userRegisterParam.getPassword()));
         userAuthenticationInfo.setAccountNonExpired(true);
         userAuthenticationInfo.setAccountNonLocked(true);
         userAuthenticationInfo.setCredentialsNonExpired(true);
@@ -68,9 +73,11 @@ public class UserServiceImpl implements UserService {
         //1.插入用户认证信息
         userAuthenticationInfoMapper.insert(userAuthenticationInfo);
 
-        // 构造用户介绍描述信息
-        UserAdditionInfo userAdditionInfo = UserAdditionInfo.copyOf(CodeskyUtils.getAnonymousUser());
+        // 构造用户介绍描述信息,默认从匿名用户拷贝
+        UserAdditionInfo userAdditionInfo = BeanUtils.copyPropertiesFrom(CodeskyUtils.getAnonymousUser(),
+                UserAdditionInfo.class);
 
+        // 修改成用户自己的相关属性
         userAdditionInfo.setUsername(userAuthenticationInfo.getUsername());
         userAdditionInfo.setUserId(userAuthenticationInfo.getId());
         userAdditionInfo.setGmtCreate(currentDate);
@@ -79,7 +86,7 @@ public class UserServiceImpl implements UserService {
         //2.插入用户描述信息
         userAdditionInfoMapper.insert(userAdditionInfo);
 
-        return ResponseVo.success(ResultCodeEnum.SUCCESS);
+        return RegisterResult.SUCCESS;
     }
 
 
@@ -89,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUserAdditionInfo(UserAdditionInfoUpdateParams params) {
+    public boolean updateUserAdditionInfo(UserAdditionInfoUpdateParam params) {
         return userAdditionInfoMapper.updateByUserIdSelective(params) > 0;
     }
 
@@ -104,7 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<PublicationsOfMemberVo> getMembersByUserIds(List<Long> ids) {
+    public List<PublicationsOfMemberVO> getMembersByUserIds(List<Long> ids) {
         return userAdditionInfoMapper.selectMembersByIds(ids);
     }
 }
