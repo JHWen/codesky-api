@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import top.codesky.forcoder.common.constant.Base;
-import top.codesky.forcoder.common.constant.EntityType;
-import top.codesky.forcoder.common.constant.ItemType;
-import top.codesky.forcoder.common.constant.ResultEnum;
+import top.codesky.forcoder.common.constant.*;
 import top.codesky.forcoder.model.entity.Question;
 import top.codesky.forcoder.model.params.QuestionAddParam;
 import top.codesky.forcoder.model.support.BaseResponse;
@@ -57,7 +54,7 @@ public class QuestionController {
      *
      * @param questionAddParam 添加问题请求封装的参数：title+content
      * @param userInfo         UserInfo in Session
-     * @return
+     * @return BaseResponse<QuestionVO>
      */
     @ApiOperation(value = "添加问题，即提问", notes = "返回操作结果，包含问题的相关信息")
     @PostMapping(path = "/question")
@@ -118,24 +115,20 @@ public class QuestionController {
     /**
      * 删除问题
      *
-     * @param questionId
-     * @param userInfo
-     * @return
+     * @param questionId question id
+     * @param userInfo   userInfo in session
+     * @return ResponseEntity<BaseResponse>
      */
     @ApiOperation(value = "删除问题", notes = "返回操作结果")
     @DeleteMapping(path = "/question/{questionId}")
-    public ResponseVo deleteQuestion(@PathVariable("questionId") long questionId,
-                                     @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
-
-        try {
-            if (questionService.deleteQuestion(questionId, userInfo.getId())) {
-                return ResponseVo.success(ResultEnum.SUCCESS);
-            }
-        } catch (Exception e) {
-            log.error("删除问题失败：{}", e.getMessage());
+    public ResponseEntity<BaseResponse> deleteQuestion(@PathVariable("questionId") @Positive long questionId,
+                                                       @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
+        ProcessStatusEnum processStatus = questionService.deleteQuestion(questionId, userInfo.getId());
+        if (processStatus == ProcessStatusEnum.SUCCESS) {
+            return ResponseEntity.ok(BaseResponse.success());
         }
-
-        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseEntity.badRequest()
+                .body(BaseResponse.error(HttpStatus.BAD_REQUEST, processStatus.message()));
     }
 
     /**

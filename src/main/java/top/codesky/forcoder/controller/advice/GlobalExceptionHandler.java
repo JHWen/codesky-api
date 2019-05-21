@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import top.codesky.forcoder.common.exception.BaseException;
 import top.codesky.forcoder.model.support.BaseResponse;
 import top.codesky.forcoder.util.CodeskyUtils;
 
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        BaseResponse baseResponse = handleBaseException(exception);
+        BaseResponse baseResponse = translateException(exception);
 
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
@@ -39,17 +40,27 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        BaseResponse baseResponse = handleBaseException(e);
+        BaseResponse baseResponse = translateException(e);
         baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         baseResponse.setMessage("Required request body is missing");
         return baseResponse;
     }
 
+    @ExceptionHandler(BaseException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public BaseResponse handleBaseExceptino(BaseException exception) {
+        BaseResponse baseResponse = translateException(exception);
+
+        HttpStatus httpStatus = exception.getStatus();
+        baseResponse.setStatus(httpStatus.value());
+
+        return baseResponse;
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseResponse handleGloabalException(Exception e) {
-        BaseResponse baseResponse = handleBaseException(e);
+        BaseResponse baseResponse = translateException(e);
 
         baseResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         baseResponse.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
@@ -57,10 +68,10 @@ public class GlobalExceptionHandler {
         return baseResponse;
     }
 
-    private <T> BaseResponse<T> handleBaseException(Throwable t) {
+    private <T> BaseResponse<T> translateException(Throwable t) {
         Assert.notNull(t, "throw must not null!");
 
-        log.error("capture a exception");
+        log.error("capture a exception: {}", t.getMessage());
 
         BaseResponse<T> baseResponse = new BaseResponse<>();
         baseResponse.setMessage(t.getMessage());

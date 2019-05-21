@@ -212,7 +212,7 @@
 
 
     <!--用户自己提出的删除问题-->
-    <delete id="deleteByQuestionIdAndUserId" parameterType="QuestionDeleteParams">
+    <delete id="deleteByQuestionIdAndUserId" parameterType="QuestionDeleteParam">
         delete
         from question
         where id = #{questionId,jdbcType=BIGINT}
@@ -300,5 +300,12 @@
         <result column="gmt_modified" jdbcType="TIMESTAMP" javaType="Date" property="gmtModified"/>
         <association property="author" column="author_id" select="selectAuthorById"/>
     </resultMap>
+
+    <!--  查询问题是否存在  -->
+    <select id="countQuestionByQuestionId" parameterType="long" resultType="int">
+        select count(*)
+        from question
+        where id = #{id,jdbcType=BIGINT}
+    </select>
 
 </mapper>

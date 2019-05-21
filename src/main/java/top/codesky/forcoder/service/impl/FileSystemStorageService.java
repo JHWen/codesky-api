@@ -57,6 +57,8 @@ public class FileSystemStorageService implements StorageService {
             //生成新的文件名
             String newFilename = CodeskyUtils.renameFile(filename);
 
+            //todo:判断文件在服务器是否已经存在，避免重复存储浪费空间
+
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, this.rootLocation.resolve(newFilename),
                         StandardCopyOption.REPLACE_EXISTING);

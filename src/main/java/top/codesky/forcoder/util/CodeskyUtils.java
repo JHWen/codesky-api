@@ -89,7 +89,7 @@ public class CodeskyUtils {
      *
      * @param baseUrl  基础URL
      * @param filename 文件名
-     * @return
+     * @return URI for file
      */
     public static String getFileUrl(String baseUrl, String filename) {
         return URI.create(baseUrl)

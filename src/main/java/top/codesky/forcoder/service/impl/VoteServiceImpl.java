@@ -6,7 +6,7 @@ import top.codesky.forcoder.common.constant.EntityType;
 import top.codesky.forcoder.common.constant.VoteStatus;
 import top.codesky.forcoder.service.VoteService;
 import top.codesky.forcoder.util.JedisAdapter;
-import top.codesky.forcoder.util.RedisKeyUtil;
+import top.codesky.forcoder.util.RedisKeyUtils;
 
 /**
  * @Date: 2019/5/12 13:49
@@ -26,11 +26,11 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public long voteUp(long userId, EntityType entityType, long entityId) {
         //获取实体的点赞key
-        String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        String likeKey = RedisKeyUtils.getLikeKey(entityType, entityId);
         jedisAdapter.sadd(likeKey, String.valueOf(userId));
 
         //获取实体的点踩key
-        String disLikeKey = RedisKeyUtil.getDisLikeKey(entityType, entityId);
+        String disLikeKey = RedisKeyUtils.getDisLikeKey(entityType, entityId);
         jedisAdapter.srem(disLikeKey, String.valueOf(userId));
 
         return jedisAdapter.scard(likeKey);
@@ -38,10 +38,10 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public long voteNeutral(long userId, EntityType entityType, long entityId) {
-        String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        String likeKey = RedisKeyUtils.getLikeKey(entityType, entityId);
         jedisAdapter.srem(likeKey, String.valueOf(userId));
 
-        String disLikeKey = RedisKeyUtil.getDisLikeKey(entityType, entityId);
+        String disLikeKey = RedisKeyUtils.getDisLikeKey(entityType, entityId);
         jedisAdapter.srem(disLikeKey, String.valueOf(userId));
 
         return jedisAdapter.scard(likeKey);
@@ -51,11 +51,11 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public long voteDown(long userId, EntityType entityType, long entityId) {
         //获取实体的点赞key
-        String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        String likeKey = RedisKeyUtils.getLikeKey(entityType, entityId);
         jedisAdapter.srem(likeKey, String.valueOf(userId));
 
         //获取实体的点踩key
-        String disLikeKey = RedisKeyUtil.getDisLikeKey(entityType, entityId);
+        String disLikeKey = RedisKeyUtils.getDisLikeKey(entityType, entityId);
         jedisAdapter.sadd(disLikeKey, String.valueOf(userId));
 
         return jedisAdapter.scard(likeKey);
@@ -63,7 +63,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public long getVoteUpCount(EntityType entityType, long entityId) {
-        String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        String likeKey = RedisKeyUtils.getLikeKey(entityType, entityId);
         return jedisAdapter.scard(likeKey);
     }
 
@@ -77,12 +77,12 @@ public class VoteServiceImpl implements VoteService {
      */
     @Override
     public VoteStatus getVoteStatus(long userId, EntityType entityType, long entityId) {
-        String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        String likeKey = RedisKeyUtils.getLikeKey(entityType, entityId);
         if (jedisAdapter.sismember(likeKey, String.valueOf(userId))) {
             return VoteStatus.VOTEUP;
         }
 
-        String disLikeKey = RedisKeyUtil.getDisLikeKey(entityType, entityId);
+        String disLikeKey = RedisKeyUtils.getDisLikeKey(entityType, entityId);
         if (jedisAdapter.sismember(disLikeKey, String.valueOf(userId))) {
             return VoteStatus.VOTEDOWN;
         }

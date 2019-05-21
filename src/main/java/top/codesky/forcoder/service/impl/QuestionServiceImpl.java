@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import top.codesky.forcoder.common.constant.ItemType;
+import top.codesky.forcoder.common.constant.ProcessStatusEnum;
 import top.codesky.forcoder.common.exception.ServiceException;
 import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.dao.QuestionMapper;
 import top.codesky.forcoder.model.entity.Question;
-import top.codesky.forcoder.model.params.QuestionDeleteParams;
+import top.codesky.forcoder.model.params.QuestionDeleteParam;
 import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 import top.codesky.forcoder.model.vo.QuestionDetailsVO;
 import top.codesky.forcoder.model.vo.QuestionItemVO;
@@ -30,6 +31,11 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper) {
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
+    }
+
+    @Override
+    public boolean questionHasExisted(long questionId) {
+        return questionMapper.countQuestionByQuestionId(questionId) > 0;
     }
 
     /**
@@ -66,9 +72,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean deleteQuestion(Long questionId, Long authorId) {
-        QuestionDeleteParams deleteParams = new QuestionDeleteParams(questionId, authorId);
-        return questionMapper.deleteByQuestionIdAndUserId(deleteParams) > 0;
+    public ProcessStatusEnum deleteQuestion(Long questionId, Long authorId) {
+        QuestionDeleteParam deleteParam = new QuestionDeleteParam(questionId, authorId);
+        int res = questionMapper.deleteByQuestionIdAndUserId(deleteParam);
+        return res > 0 ? ProcessStatusEnum.SUCCESS : res == 0 ?
+                ProcessStatusEnum.RECORD_NOT_EXIST : ProcessStatusEnum.UNKNOWN_REASON;
     }
 
     /**

@@ -13,6 +13,14 @@ import java.util.List;
 public interface UserAdditionInfoMapper {
 
     /**
+     * count the num of user by userId
+     *
+     * @param userId user id
+     * @return the num of user
+     */
+    int countUserByUserId(long userId);
+
+    /**
      * 根据userId，选择性更新用户描述信息
      *
      * @param params

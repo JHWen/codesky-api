@@ -12,8 +12,10 @@ import top.codesky.forcoder.common.constant.ResultEnum;
 import top.codesky.forcoder.common.exception.StorageException;
 import top.codesky.forcoder.common.properties.StorageProperties;
 import top.codesky.forcoder.model.params.UserAdditionInfoUpdateParam;
+import top.codesky.forcoder.model.support.BaseResponse;
 import top.codesky.forcoder.model.support.UserInfo;
 import top.codesky.forcoder.model.vo.ResponseVo;
+import top.codesky.forcoder.model.vo.UploadResultVO;
 import top.codesky.forcoder.service.StorageService;
 import top.codesky.forcoder.service.UserService;
 import top.codesky.forcoder.util.CodeskyUtils;
@@ -45,44 +47,38 @@ public class FileUploadController {
 
     @ApiOperation(value = "上传文件", notes = "返回上传文件的访问url")
     @PostMapping(path = "/upload")
-    public ResponseVo uploadFile(@RequestParam(name = "file") MultipartFile multipartFile) {
+    public BaseResponse<UploadResultVO> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile) {
         String filename = storageService.store(multipartFile);
-
-        return ResponseVo.success(ResultEnum.SUCCESS
-                , CodeskyUtils.getFileUrl(properties.getRootUrl(), filename));
+        UploadResultVO uploadResultVO = new UploadResultVO(CodeskyUtils.getFileUrl(properties.getRootUrl(), filename));
+        return BaseResponse.success(uploadResultVO);
     }
 
     /**
      * 更新用户头像
      *
-     * @param userInfo
-     * @param multipartFile
+     * @param userInfo      userInfo in session
+     * @param multipartFile MultipartFile
      * @return
      */
     @ApiOperation(value = "更新用户头像", notes = "返回头像上传结果")
     @PostMapping(path = "/me/avatar")
-    public ResponseVo updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
-                                   @RequestParam("file") MultipartFile multipartFile) {
-        //存储头像图片
+    public ResponseEntity<BaseResponse> updateAvatar(@SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo,
+                                                     @RequestParam("file") MultipartFile multipartFile) {
+        // 1.存储头像图片
         String filename = storageService.store(multipartFile);
         String avatarUrl = CodeskyUtils.getFileUrl(properties.getRootUrl(), filename);
-
+        // 2.更新数据库
         UserAdditionInfoUpdateParam params = new UserAdditionInfoUpdateParam();
         params.setUserId(userInfo.getId());
         params.setAvatarUrl(avatarUrl);
         params.setGmtModified(new Date());
 
         if (userService.updateUserAdditionInfo(params)) {
-            return ResponseVo.success(ResultEnum.SUCCESS);
+            return ResponseEntity.ok(BaseResponse.success());
         }
-
-        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
-    }
-
-
-    @ExceptionHandler(StorageException.class)
-    public ResponseEntity<ResponseVo> handleStorageFileNotFound(StorageException exc) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR));
+                .body(BaseResponse.error(HttpStatus.INTERNAL_SERVER_ERROR));
     }
+
+
 }

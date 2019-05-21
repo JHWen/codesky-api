@@ -26,4 +26,6 @@ public interface UserService {
     UserAdditionInfo getPublicationsOfMember(String username);
 
     List<PublicationsOfMemberVO> getMembersByUserIds(List<Long> ids);
+
+    boolean userHasExisted(long userId);
 }

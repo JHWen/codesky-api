@@ -114,4 +114,9 @@ public class UserServiceImpl implements UserService {
     public List<PublicationsOfMemberVO> getMembersByUserIds(List<Long> ids) {
         return userAdditionInfoMapper.selectMembersByIds(ids);
     }
+
+    @Override
+    public boolean userHasExisted(long userId) {
+        return userAdditionInfoMapper.countUserByUserId(userId) == 1;
+    }
 }

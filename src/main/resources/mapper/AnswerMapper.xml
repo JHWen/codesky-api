@@ -296,4 +296,43 @@
     </select>
 
 
+    <!--  查询用户是否已经回答，即存在一条记录  -->
+    <select id="countUserAnswerByQuestionId" parameterType="AnswerCountQuery" resultType="int">
+        select count(*)
+        from answer
+        where question_id = #{questionId,jdbcType=BIGINT}
+          and author_id = #{authorId,jdbcType=BIGINT}
+    </select>
+
+    <!--  查询回答详细信息，包含答题者的信息  -->
+    <select id="selectAnswerByAnswerId" resultMap="answerDetailsResultMap">
+        select answer.id           as answer_id,
+               content,
+               excerpt,
+               comment_count,
+               voteup_count,
+               is_anonymously,
+               answer.gmt_create   as answer_gmt_create,
+               answer.gmt_modified as answer_gmt_modified,
+               user.user_id        as author_id,
+               username,
+               gender,
+               avatar_url,
+               headline,
+               business,
+               user.gmt_create     as user_gmt_create,
+               user.gmt_modified   as user_gmt_modified
+        from answer
+                 left outer join user_addition_info as user on answer.author_id = user.user_id
+        where answer.id = #{authorId,jdbcType=BIGINT};
+    </select>
+
+
+    <!--  统计答案数量，判断答案是否存在  -->
+    <select id="countAnswerByAnswerId" parameterType="long" resultType="int">
+        select count(*)
+        from answer
+        where id = #{id,jdbcType=BIGINT};
+    </select>
+
 </mapper>

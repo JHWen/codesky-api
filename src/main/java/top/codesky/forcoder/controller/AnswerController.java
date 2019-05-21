@@ -5,14 +5,22 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import top.codesky.forcoder.common.constant.Base;
+import top.codesky.forcoder.common.constant.ProcessStatusEnum;
 import top.codesky.forcoder.common.constant.ResultEnum;
+import top.codesky.forcoder.model.support.BaseResponse;
 import top.codesky.forcoder.model.support.UserInfo;
-import top.codesky.forcoder.model.vo.AnswerAddVo;
+import top.codesky.forcoder.model.params.AnswerAddParam;
+import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 import top.codesky.forcoder.model.vo.ResponseVo;
 import top.codesky.forcoder.service.AnswerService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 /**
  * @Date: 2019/4/20 12:05
@@ -35,50 +43,45 @@ public class AnswerController {
     /**
      * 添加回答
      *
-     * @param answerAddVo
-     * @param userInfo
-     * @return
+     * @param answerAddParam AnswerAddParam contains questionId and answer content
+     * @param userInfo       userinfo in session
+     * @return ResponseEntity<BaseResponse>
      */
     @ApiOperation(value = "添加回答", notes = "返回操作结果")
     @PostMapping(path = "/answer")
-    public ResponseVo addAnswer(@RequestBody AnswerAddVo answerAddVo,
-                                @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
-        if (answerAddVo.getQuestionId() == null || StringUtils.isEmpty(answerAddVo.getContent())) {
-            return ResponseVo.error(ResultEnum.PARAM_IS_INVALID);
+    public ResponseEntity<BaseResponse> addAnswer(@RequestBody @Valid AnswerAddParam answerAddParam,
+                                                  @SessionAttribute(Base.USER_INFO_SESSION_KEY) UserInfo userInfo) {
+        ProcessStatusEnum processStatusEnum = answerService.addAnswer(answerAddParam.getQuestionId(),
+                userInfo.getId(), answerAddParam.getContent());
+        switch (processStatusEnum) {
+            case SUCCESS:
+                return ResponseEntity.ok(BaseResponse.success());
+            case RECORD_HAS_EXISTED:
+                return ResponseEntity.badRequest()
+                        .body(BaseResponse.error(HttpStatus.BAD_REQUEST, "请勿重复回答"));
+            default:
+                return ResponseEntity.badRequest()
+                        .body(BaseResponse.error(HttpStatus.BAD_REQUEST, processStatusEnum.message()));
         }
-
-        try {
-            //todo:判断用户是否已经回答
-
-            if (answerService.addAnswer(answerAddVo.getQuestionId(), userInfo.getId()
-                    , answerAddVo.getContent())) {
-                return ResponseVo.success(ResultEnum.SUCCESS);
-            }
-
-        } catch (Exception e) {
-            logger.error("添加回答失败：{}", e.getMessage());
-        }
-
-        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
     }
 
     /**
      * 获取回答的详情
      *
-     * @param answerId
-     * @return
+     * @param answerId answer id
+     * @return <code> ResponseEntity<BaseResponse<AnswerDetailsVO>> </code>
      */
     @ApiOperation(value = "获取回答的详细信息", notes = "返回回答的详细信息")
     @GetMapping(path = "/answer/{answer_id}")
-    public ResponseVo getAnswer(@PathVariable("answer_id") long answerId) {
+    public ResponseEntity<BaseResponse<AnswerDetailsVO>> getAnswer(@PathVariable("answer_id") @Positive long answerId) {
 
-        try {
-            return ResponseVo.success(ResultEnum.SUCCESS);
-        } catch (Exception e) {
-            logger.error("添加回答失败：{}", e.getMessage());
+        AnswerDetailsVO answerDetailsVO = answerService.getAnswerDetailsByAnswerId(answerId);
+        if (answerDetailsVO != null) {
+            return ResponseEntity.ok(BaseResponse.success(answerDetailsVO));
         }
 
-        return ResponseVo.error(ResultEnum.INTERFACE_INNER_INVOKE_ERROR);
+        return ResponseEntity.badRequest()
+                .body(BaseResponse.error(HttpStatus.BAD_REQUEST));
     }
 
 }

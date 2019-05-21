@@ -1,5 +1,7 @@
 package top.codesky.forcoder.model.vo;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,15 +10,12 @@ import java.util.List;
  * @Author: codesky
  * @Description: 封装返回粉丝列表
  */
-public class FollowerVo {
+@Getter
+public class FollowerVO {
     private List<PublicationsOfMemberVO> followers;
 
-    public FollowerVo() {
+    public FollowerVO() {
         this.followers = new ArrayList<>();
-    }
-
-    public List<PublicationsOfMemberVO> getFollowers() {
-        return followers;
     }
 
     public void setFollowers(List<PublicationsOfMemberVO> followers) {

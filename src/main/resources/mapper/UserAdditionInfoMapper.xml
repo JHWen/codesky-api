@@ -246,4 +246,12 @@
         </set>
         where user_id = #{userId,jdbcType=BIGINT}
     </update>
+
+
+    <!--  判断用户是否存在  -->
+    <select id="countUserByUserId" parameterType="long" resultType="int">
+        select count(*)
+        from user_addition_info
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
 </mapper>

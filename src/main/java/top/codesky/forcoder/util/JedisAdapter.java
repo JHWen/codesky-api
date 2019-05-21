@@ -1,5 +1,6 @@
 package top.codesky.forcoder.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ import java.util.Set;
  * @Description: 基于Jedis封装redis操作
  */
 @Repository
+@Slf4j
 public class JedisAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(JedisAdapter.class);
 
     private final JedisPool jedisPool;
 
@@ -72,24 +73,4 @@ public class JedisAdapter {
             return jedis.zscore(key, member);
         }
     }
-
-
-    public static void main(String[] args) {
-        JedisPool pool = new JedisPool("localhost", 6379);
-        try (Jedis jedis = pool.getResource()) {
-            String key = RedisKeyUtil.getLikeKey(EntityType.ANSWER, 1);
-            long res = jedis.sadd(key, String.valueOf(1), String.valueOf(5));
-            System.out.println(res);
-            jedis.sadd(key, String.valueOf(2));
-            jedis.sadd(key, String.valueOf(3));
-            jedis.sadd(key, String.valueOf(4));
-            System.out.println(jedis.smembers(key));
-            System.out.println(jedis.smembers("heheda"));
-            System.out.println(jedis.scard(key));
-            jedis.zadd("test", 2L, "12");
-        }
-        pool.close();
-
-    }
-
 }

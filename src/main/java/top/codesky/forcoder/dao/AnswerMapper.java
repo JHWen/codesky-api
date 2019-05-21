@@ -3,6 +3,7 @@ package top.codesky.forcoder.dao;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 import top.codesky.forcoder.model.entity.Answer;
+import top.codesky.forcoder.model.params.AnswerCountQuery;
 import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 
 import java.util.List;
@@ -10,6 +11,25 @@ import java.util.List;
 @Mapper
 @Repository
 public interface AnswerMapper {
+
+    /**
+     * 通过answer id统计数量，判断答案是否存在
+     *
+     * @param answerId answer id
+     * @return the num of answer : 0 or 1
+     */
+    int countAnswerByAnswerId(long answerId);
+
+
+    AnswerDetailsVO selectAnswerByAnswerId(long answerId);
+
+    /**
+     * 通过user id 和 question id，判断用户是否已经作答
+     *
+     * @param answerCountQuery contain questionId and userId
+     * @return count result
+     */
+    int countUserAnswerByQuestionId(AnswerCountQuery answerCountQuery);
 
 
     /**

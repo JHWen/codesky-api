@@ -1,5 +1,6 @@
 package top.codesky.forcoder.service;
 
+import top.codesky.forcoder.common.constant.ProcessStatusEnum;
 import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 
 import java.util.List;
@@ -11,7 +12,11 @@ import java.util.List;
  */
 public interface AnswerService {
 
-    boolean addAnswer(Long questionId, Long authorId, String content);
+    ProcessStatusEnum addAnswer(Long questionId, Long authorId, String content);
 
     List<AnswerDetailsVO> getAnswersByQuestionId(Long questionId);
+
+    AnswerDetailsVO getAnswerDetailsByAnswerId(long answerId);
+
+    boolean answerHasExisted(long answerId);
 }

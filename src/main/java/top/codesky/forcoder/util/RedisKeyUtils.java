@@ -7,7 +7,7 @@ import top.codesky.forcoder.common.constant.EntityType;
  * @Author: codesky
  * @Description: RedisKey工具类 : 生成点赞、关注操作相关的key，如 LIKE:1:ANSWER
  */
-public class RedisKeyUtil {
+public class RedisKeyUtils {
 
     private static final String SPLIT = ":";
     //赞、踩功能
@@ -18,7 +18,7 @@ public class RedisKeyUtil {
     private static final String BIZ_FOLLOWER = "FOLLOWER";
     private static final String BIZ_FOLLOWEE = "FOLLOWEE";
 
-    private RedisKeyUtil() {
+    private RedisKeyUtils() {
 
     }
 
