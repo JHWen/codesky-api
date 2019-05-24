@@ -78,9 +78,9 @@ public class JedisAdapter {
         }
     }
 
-    public List<String> brpop(String key) {
+    public List<String> brpop(final int timeout,final String key) {
         try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.brpop(key);
+            return jedis.brpop(timeout,key);
         }
     }
 

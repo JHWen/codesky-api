@@ -29,7 +29,7 @@ public class EventConsumerThread extends Thread {
         String key = RedisKeyUtils.getEventQueueKey();
         while (true) {
             try {
-                List<String> events = jedisAdapter.brpop(key);
+                List<String> events = jedisAdapter.brpop(0, key);
                 for (String event : events) {
                     if (event.equals(key)) {
                         continue;
