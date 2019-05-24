@@ -8,6 +8,7 @@ import top.codesky.forcoder.dao.AnswerMapper;
 import top.codesky.forcoder.model.entity.Answer;
 import top.codesky.forcoder.model.params.AnswerCountQuery;
 import top.codesky.forcoder.model.vo.AnswerDetailsVO;
+import top.codesky.forcoder.sensitivefilter.SensitiveFilter;
 import top.codesky.forcoder.service.AnswerService;
 import top.codesky.forcoder.util.CodeskyUtils;
 
@@ -23,9 +24,11 @@ import java.util.List;
 public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerMapper answerMapper;
+    private final SensitiveFilter sensitiveFilter;
 
-    public AnswerServiceImpl(AnswerMapper answerMapper) {
+    public AnswerServiceImpl(AnswerMapper answerMapper, SensitiveFilter sensitiveFilter) {
         this.answerMapper = answerMapper;
+        this.sensitiveFilter = sensitiveFilter;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setQuestionId(questionId);
 
         // 防止xss,过滤html标签
-        answer.setContent(CodeskyUtils.cleanHtml(content));
+        answer.setContent(sensitiveFilter.replaceSensitiveWord(CodeskyUtils.cleanHtml(content)));
         answer.setAnonymously(false);
 
         Date currentDate = new Date();
@@ -59,7 +62,7 @@ public class AnswerServiceImpl implements AnswerService {
         } else {
             excerpt = text.substring(0, 200);
         }
-        answer.setExcerpt(excerpt);
+        answer.setExcerpt(sensitiveFilter.replaceSensitiveWord(excerpt));
 
         // 3.插入数据库
         int res = answerMapper.insertSelective(answer);

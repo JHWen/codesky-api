@@ -1,15 +1,13 @@
 package top.codesky.forcoder.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import top.codesky.forcoder.common.constant.EntityType;
 import top.codesky.forcoder.common.properties.RedisProperties;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -73,4 +71,19 @@ public class JedisAdapter {
             return jedis.zscore(key, member);
         }
     }
+
+    public long lpush(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.lpush(key, value);
+        }
+    }
+
+    public List<String> brpop(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.brpop(key);
+        }
+    }
+
+
+
 }

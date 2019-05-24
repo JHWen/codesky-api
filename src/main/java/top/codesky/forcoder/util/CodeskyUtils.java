@@ -33,6 +33,8 @@ public class CodeskyUtils {
     private static final short DEFAULT_GENDER = 1;
     private static final long DEFAULT_ID = 0L;
 
+    public static final long DEFAULT_SYSTEM_ID = 0L;
+
     private static final UserAdditionInfo anonymousUser = new UserAdditionInfo(
             DEFAULT_ID, DEFAULT_USERNAME, DEFAULT_ID, DEFAULT_GENDER, DEFAULT_AVATAR_URl, DEFAULT_HEADLINE, DEFAULT_BUSINESS,
             new Date(), new Date()

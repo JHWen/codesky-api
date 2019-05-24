@@ -14,6 +14,7 @@ import top.codesky.forcoder.model.vo.AnswerDetailsVO;
 import top.codesky.forcoder.model.vo.QuestionDetailsVO;
 import top.codesky.forcoder.model.vo.QuestionItemVO;
 import top.codesky.forcoder.model.vo.QuestionWithAuthor;
+import top.codesky.forcoder.sensitivefilter.SensitiveFilter;
 import top.codesky.forcoder.service.QuestionService;
 import top.codesky.forcoder.util.BeanUtils;
 
@@ -26,11 +27,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
     private final AnswerMapper answerMapper;
+    private final SensitiveFilter sensitiveFilter;
 
     @Autowired
-    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, AnswerMapper answerMapper, SensitiveFilter sensitiveFilter) {
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
+        this.sensitiveFilter = sensitiveFilter;
     }
 
     @Override
@@ -51,8 +54,8 @@ public class QuestionServiceImpl implements QuestionService {
     public Question addQuestion(String title, String content, Long userId) {
         //构造回答
         Question question = new Question();
-        question.setTitle(title);
-        question.setContent(content == null ? "" : content);
+        question.setTitle(sensitiveFilter.replaceSensitiveWord(title));
+        question.setContent(content == null ? "" : sensitiveFilter.replaceSensitiveWord(content));
         question.setAuthorId(userId);
         Date currentDate = new Date();
         question.setGmtCreate(currentDate);

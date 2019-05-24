@@ -18,6 +18,9 @@ public class RedisKeyUtils {
     private static final String BIZ_FOLLOWER = "FOLLOWER";
     private static final String BIZ_FOLLOWEE = "FOLLOWEE";
 
+    //事件队列
+    private static final String BIZ_EVENT_QUEUE = "EVENT_QUEUE";
+
     private RedisKeyUtils() {
 
     }
@@ -40,5 +43,9 @@ public class RedisKeyUtils {
     //实体的被关注者，如粉丝（follower）
     public static String getFollowerKey(EntityType entityType, long entityId) {
         return BIZ_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
+    }
+
+    public static String getEventQueueKey() {
+        return BIZ_EVENT_QUEUE;
     }
 }
